@@ -117,7 +117,9 @@ void AppController::run() {
 
 ### 역할 메뉴 요약 정보 표시
 
-역할 선택 화면(showRoleMenu)과 역할별 메뉴(showOrderManagerMenu, showProductionManagerMenu) 모두 동일한 count·totalStock을 받아 표시한다.
+역할 선택 화면(showRoleMenu)에 count·totalStock을 표시한다.
+역할별 메뉴(showOrderManagerMenu, showProductionManagerMenu)의 동적 표시는
+OrderController·ProductionController에 sampleRepo 접근이 필요하므로 이후 Phase에서 처리한다. (TODO)
 
 ```
 ========================================
@@ -162,7 +164,7 @@ class MockSampleRepository : public IRepository<Sample> { ... };
 | 테스트 ID | 설명 |
 |-----------|------|
 | `SM02Test.ShowsAllSamples` | findAll() 반환값 → showSampleList() 호출 |
-| `SM02Test.ShowsEmptyMessage` | findAll() 빈 배열 → showSampleList([]) 호출 |
+| `SM02Test.ShowsEmptyListWhenNoSamples` | findAll() 빈 배열 → showSampleList([]) 호출 |
 | `SM03Test.FindsByKeyword` | keyword로 필터링 후 showSampleList(결과) 호출 |
 | `SM03Test.ShowsNoResultWhenNotFound` | 매칭 없음 → showNoResult() 호출 |
 | `SM03Test.EmptyKeywordMatchesAll` | 빈 keyword → 전체 결과 반환 |
