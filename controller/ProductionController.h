@@ -1,10 +1,20 @@
 #pragma once
 #include "../view/MainView.h"
+#include "../view/SampleView.h"
+#include "../model/IRepository.h"
+#include "../model/Sample.h"
 
 class ProductionController {
 public:
-    explicit ProductionController(MainView& view);
+    ProductionController(MainView& mainView,
+                         SampleView& sampleView,
+                         IRepository<Sample>& sampleRepo);
     void run();
 private:
-    MainView& view_;
+    MainView&            mainView_;
+    SampleView&          sampleView_;
+    IRepository<Sample>& sampleRepo_;
+
+    void runSampleMenu();
+    void registerSample();
 };

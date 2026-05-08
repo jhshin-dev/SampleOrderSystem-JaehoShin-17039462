@@ -130,10 +130,14 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="view\MainView.cpp" />
+    <ClCompile Include="view\SampleView.cpp" />
     <ClCompile Include="controller\AppController.cpp" />
     <ClCompile Include="controller\OrderController.cpp" />
     <ClCompile Include="controller\ProductionController.cpp" />
+    <ClCompile Include="model\SampleRepository.cpp" />
     <ClCompile Include="test\AppControllerTest.cpp" />
+    <ClCompile Include="test\SampleRepositoryTest.cpp" />
+    <ClCompile Include="test\SM01Test.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

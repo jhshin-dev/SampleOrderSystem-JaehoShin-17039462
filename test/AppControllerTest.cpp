@@ -1,6 +1,9 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 #include "../view/MainView.h"
+#include "../view/SampleView.h"
+#include "../model/IRepository.h"
+#include "../model/Sample.h"
 #include "../controller/AppController.h"
 #include "../controller/OrderController.h"
 #include "../controller/ProductionController.h"
@@ -18,6 +21,26 @@ public:
     MOCK_METHOD(int,  getMenuInput,              (), (override));
 };
 
+class MockSampleView : public SampleView {
+public:
+    MOCK_METHOD(void,        showSampleMenu,         (), (override));
+    MOCK_METHOD(std::string, inputName,              (), (override));
+    MOCK_METHOD(int,         inputAvgProductionTime, (), (override));
+    MOCK_METHOD(double,      inputYield,             (), (override));
+    MOCK_METHOD(void,        showRegistered,  (const Sample&),      (override));
+    MOCK_METHOD(void,        showInvalidInput,(const std::string&), (override));
+    MOCK_METHOD(void,        showComingSoon,          (), (override));
+};
+
+class MockSampleRepository : public IRepository<Sample> {
+public:
+    MOCK_METHOD(Sample,              create,  (Sample),         (override));
+    MOCK_METHOD(std::vector<Sample>, findAll, (),               (override));
+    MOCK_METHOD(std::optional<Sample>, findById, (int),         (override));
+    MOCK_METHOD(bool,                update,  (const Sample&),  (override));
+    MOCK_METHOD(bool,                remove,  (int),            (override));
+};
+
 // ── AppController ──────────────────────────────────────────
 
 TEST(AppControllerTest, ExitOnZero) {
@@ -25,7 +48,8 @@ TEST(AppControllerTest, ExitOnZero) {
     EXPECT_CALL(mock, showRoleMenu()).Times(1);
     EXPECT_CALL(mock, getMenuInput()).WillOnce(Return(0));
 
-    AppController ctrl(mock);
+    MockSampleView sv; MockSampleRepository sr;
+    AppController ctrl(mock, sv, sr);
     ctrl.run();
 }
 
@@ -37,7 +61,8 @@ TEST(AppControllerTest, InvalidInputShowsError) {
         .WillOnce(Return(9))
         .WillOnce(Return(0));
 
-    AppController ctrl(mock);
+    MockSampleView sv; MockSampleRepository sr;
+    AppController ctrl(mock, sv, sr);
     ctrl.run();
 }
 
@@ -50,7 +75,8 @@ TEST(AppControllerTest, SelectOrderManager) {
         .WillOnce(Return(0))   // 주문 담당자 메뉴: 종료
         .WillOnce(Return(0));  // 역할 선택: 종료
 
-    AppController ctrl(mock);
+    MockSampleView sv; MockSampleRepository sr;
+    AppController ctrl(mock, sv, sr);
     ctrl.run();
 }
 
@@ -63,7 +89,8 @@ TEST(AppControllerTest, SelectProductionManager) {
         .WillOnce(Return(0))   // 생산 담당자 메뉴: 종료
         .WillOnce(Return(0));  // 역할 선택: 종료
 
-    AppController ctrl(mock);
+    MockSampleView sv; MockSampleRepository sr;
+    AppController ctrl(mock, sv, sr);
     ctrl.run();
 }
 
@@ -105,34 +132,34 @@ TEST(OrderControllerTest, InvalidInputShowsError) {
 // ── ProductionController ───────────────────────────────────
 
 TEST(ProductionControllerTest, ExitOnZero) {
-    MockMainView mock;
+    MockMainView mock; MockSampleView sv; MockSampleRepository sr;
     EXPECT_CALL(mock, showProductionManagerMenu(0, 0)).Times(1);
     EXPECT_CALL(mock, getMenuInput()).WillOnce(Return(0));
 
-    ProductionController ctrl(mock);
+    ProductionController ctrl(mock, sv, sr);
     ctrl.run();
 }
 
 TEST(ProductionControllerTest, ComingSoonOnValidMenu) {
-    MockMainView mock;
+    MockMainView mock; MockSampleView sv; MockSampleRepository sr;
     EXPECT_CALL(mock, showProductionManagerMenu(0, 0)).Times(2);
     EXPECT_CALL(mock, showComingSoon()).Times(1);
     EXPECT_CALL(mock, getMenuInput())
-        .WillOnce(Return(1))
+        .WillOnce(Return(2))   // 2~4 → 준비 중 (1은 시료 관리로 진입)
         .WillOnce(Return(0));
 
-    ProductionController ctrl(mock);
+    ProductionController ctrl(mock, sv, sr);
     ctrl.run();
 }
 
 TEST(ProductionControllerTest, InvalidInputShowsError) {
-    MockMainView mock;
+    MockMainView mock; MockSampleView sv; MockSampleRepository sr;
     EXPECT_CALL(mock, showProductionManagerMenu(0, 0)).Times(2);
     EXPECT_CALL(mock, showInvalidInput()).Times(1);
     EXPECT_CALL(mock, getMenuInput())
         .WillOnce(Return(9))
         .WillOnce(Return(0));
 
-    ProductionController ctrl(mock);
+    ProductionController ctrl(mock, sv, sr);
     ctrl.run();
 }

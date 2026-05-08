@@ -25,5 +25,8 @@ x86/
 # NuGet packages (keep packages.config but ignore package contents)
 packages/
 
+# Runtime data
+data/
+
 # Claude Code
 .mcp.json

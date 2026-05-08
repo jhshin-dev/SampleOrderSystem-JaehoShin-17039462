@@ -178,6 +178,7 @@ int main(int argc, char** argv) {
 | 문서 | Phase | 상태 |
 |------|-------|------|
 | `docs/design/phase-1.md` | 메인 메뉴 (역할 선택·네비게이션) | 설계 완료 |
+| `docs/design/phase-2.md` | 시료 등록 (SM-01, Repository 계층) | 설계 완료 |
 
 ## Development Workflow
 

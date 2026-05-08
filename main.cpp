@@ -1,6 +1,8 @@
 #include <gtest/gtest.h>
 #include "controller/AppController.h"
 #include "view/MainView.h"
+#include "view/SampleView.h"
+#include "model/SampleRepository.h"
 #include <string>
 
 int main(int argc, char** argv) {
@@ -10,8 +12,10 @@ int main(int argc, char** argv) {
             return RUN_ALL_TESTS();
         }
     }
-    MainView view;
-    AppController app(view);
+    SampleRepository sampleRepo;
+    MainView   mainView;
+    SampleView sampleView;
+    AppController app(mainView, sampleView, sampleRepo);
     app.run();
     return 0;
 }
