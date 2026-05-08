@@ -29,7 +29,7 @@ test/
 ```
 controller/ProductionController.h   IRepository<Sample>& 주입 추가
 controller/ProductionController.cpp 시료 관리 서브 메뉴 → SM-01 연결
-controller/AppController.h          SampleRepository& 주입 추가
+controller/AppController.h          IRepository<Sample>& 주입 추가
 controller/AppController.cpp        SampleRepository 생성 후 ProductionController에 전달
 main.cpp                            SampleRepository 인스턴스 생성 후 AppController에 주입
 test/AppControllerTest.cpp          MockSampleRepository 추가, 기존 테스트 생성자 수정
@@ -285,15 +285,16 @@ app.run();
 
 | 테스트 ID | 설명 |
 |-----------|------|
-| `JsonRepositoryTest.CreateAssignsAutoIncrementId` | 첫 create → id=1, 두 번째 → id=2 |
-| `JsonRepositoryTest.FindAllEmptyOnStart` | 파일 없이 시작 시 빈 배열 반환 |
-| `JsonRepositoryTest.FindAllReturnsCreatedItems` | create 후 findAll에 포함 |
-| `JsonRepositoryTest.FindByIdReturnsItem` | create 후 findById 성공 |
-| `JsonRepositoryTest.FindByIdReturnsNulloptForMissing` | 존재하지 않는 id → nullopt |
-| `JsonRepositoryTest.PersistsAcrossInstances` | 첫 인스턴스 create → 두 번째 인스턴스 findAll에 포함 |
-| `SampleRepositoryTest.StockInitializedToZero` | create 시 stock 강제 0 |
+| `SampleRepositoryTest.CreateAssignsAutoIncrementId` | 첫 create → id=1, 두 번째 → id=2 |
+| `SampleRepositoryTest.FindAllEmptyOnStart` | 파일 없이 시작 시 빈 배열 반환 |
+| `SampleRepositoryTest.FindAllReturnsCreatedItems` | create 후 findAll에 포함 |
+| `SampleRepositoryTest.FindByIdReturnsItem` | create 후 findById 성공 |
+| `SampleRepositoryTest.FindByIdReturnsNulloptForMissing` | 존재하지 않는 id → nullopt |
+| `SampleRepositoryTest.PersistsAcrossInstances` | 첫 인스턴스 create → 두 번째 인스턴스 findAll에 포함 |
+| `SampleRepositoryTest.StockAlwaysInitializedToZero` | create 시 stock 강제 0 |
 
-> 테스트용 임시 파일 경로: `data/test_samples_<uuid>.json` — 테스트 후 삭제
+> JsonRepository는 헤더 온리 템플릿이므로 SampleRepository를 통해 함께 검증한다.
+> 테스트용 임시 파일 경로: `data/test_samples.json` — SetUp/TearDown으로 생성·삭제
 
 ### SM01Test — 등록 흐름 (MockSampleView + MockSampleRepository)
 

@@ -12,7 +12,8 @@
       "PowerShell($msbuild = \"C:\\\\Program Files\\\\Microsoft Visual Studio\\\\18\\\\Community\\\\MSBuild\\\\Current\\\\Bin\\\\MSBuild.exe\"; cd C:\\\\reviewer\\\\SampleOrderSystem; & $msbuild SampleOrderSystem.vcxproj /p:Configuration=Debug /p:Platform=x64 2>&1)",
       "PowerShell($msbuild = \"C:\\\\Program Files\\\\Microsoft Visual Studio\\\\18\\\\Community\\\\MSBuild\\\\Current\\\\Bin\\\\MSBuild.exe\"; cd C:\\\\reviewer\\\\SampleOrderSystem; & $msbuild SampleOrderSystem.vcxproj /p:Configuration=Debug /p:Platform=x64 /t:Rebuild 2>&1)",
       "WebFetch(domain:github.com)",
-      "PowerShell(New-Item *)"
+      "PowerShell(New-Item *)",
+      "PowerShell(cd C:\\\\reviewer\\\\SampleOrderSystem; cmd /c \"echo 0 | .\\\\x64\\\\Debug\\\\SampleOrderSystem.exe\"; Write-Output \"ExitCode: $LASTEXITCODE\")"
     ]
   }
 }
