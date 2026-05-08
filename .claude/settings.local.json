@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(Get-ChildItem C:\\\\reviewer\\\\SampleOrderSystem -Recurse | Where-Object { -not $_.PSIsContainer })",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "PowerShell(Get-ChildItem \"C:\\\\Users\\\\User\\\\.claude\\\\commands\" -ErrorAction SilentlyContinue; if \\(-not \\(Test-Path \"C:\\\\Users\\\\User\\\\.claude\\\\commands\"\\)\\) { Write-Output \"commands dir does not exist\" } else { Write-Output \"commands dir exists\" })",
+      "PowerShell(& \"C:\\\\Program Files\\\\Microsoft Visual Studio\\\\2022\\\\Community\\\\MSBuild\\\\Current\\\\Bin\\\\MSBuild.exe\" --version 2>&1 | Select-Object -First 3)",
+      "PowerShell(cmd /c \"dir `\"C:\\\\Program Files`\" /b 2>&1\")",
+      "PowerShell(cmd /c \"dir `\"C:\\\\Program Files\\\\Microsoft Visual Studio`\" /b 2>&1\")",
+      "PowerShell(cmd /c \"dir `\"C:\\\\Program Files\\\\Microsoft Visual Studio\\\\18`\" /b 2>&1\")",
+      "PowerShell(cmd /c \"dir `\"C:\\\\Program Files\\\\Microsoft Visual Studio\\\\18\\\\Community\\\\MSBuild\\\\Current\\\\Bin`\" /b 2>&1\")",
+      "PowerShell($msbuild = \"C:\\\\Program Files\\\\Microsoft Visual Studio\\\\18\\\\Community\\\\MSBuild\\\\Current\\\\Bin\\\\MSBuild.exe\"; cd C:\\\\reviewer\\\\SampleOrderSystem; & $msbuild SampleOrderSystem.vcxproj /p:Configuration=Debug /p:Platform=x64 2>&1)",
+      "PowerShell($msbuild = \"C:\\\\Program Files\\\\Microsoft Visual Studio\\\\18\\\\Community\\\\MSBuild\\\\Current\\\\Bin\\\\MSBuild.exe\"; cd C:\\\\reviewer\\\\SampleOrderSystem; & $msbuild SampleOrderSystem.vcxproj /p:Configuration=Debug /p:Platform=x64 /t:Rebuild 2>&1)",
+      "WebFetch(domain:github.com)",
+      "PowerShell(New-Item *)"
+    ]
+  }
+}
