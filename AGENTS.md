@@ -9,6 +9,7 @@
 ```
 docs/
 ├── PRD.md                          전체 제품 요구사항 (기능·도메인·비기능)
+├── PLAN.md                         Phase별 개발 목표 및 계획
 └── features/
     ├── MM-main-menu.md             메인 메뉴 화면 구성 및 네비게이션 흐름
     ├── SM-sample-management.md     시료 등록·조회·검색
@@ -25,6 +26,7 @@ docs/
 | 문서 | 내용 요약 |
 |------|-----------|
 | `docs/PRD.md` | 시스템 전체 요구사항. 메인 메뉴 구조, 기능 ID 목록, 도메인 모델, 상태 전이, 비기능 요구사항, 범위 외 항목 포함 |
+| `docs/PLAN.md` | Phase별 개발 목표를 세운 계획 파일 |
 | `docs/features/MM-main-menu.md` | 프로그램 진입점. 요약 정보(시료 수·총 재고) 표시, 메뉴 선택 처리, 루프 흐름 |
 | `docs/features/SM-sample-management.md` | 시료 등록 입력값·검증, 조회 출력 항목, 이름 기반 검색 로직 |
 | `docs/features/OR-order.md` | 주문 접수 입력값, 승인 시 재고 충분/부족 분기 흐름, 거절 제약, 생산 라인 자동 등록 계산값 |
