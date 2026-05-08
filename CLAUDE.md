@@ -182,6 +182,7 @@ int main(int argc, char** argv) {
 | `docs/design/phase-3.md` | 시료 조회·검색 (SM-02·03) + 요약 정보 갱신 | 설계 완료 |
 | `docs/design/phase-4.md` | 주문 접수 (OR-01·02, OrderRepository) | 설계 완료 |
 | `docs/design/phase-5.md` | 주문 승인·거절 (OR-03·04) | 설계 완료 |
+| `docs/design/phase-6.md` | 모니터링 (MO-01·02) | 설계 완료 |
 
 ## Development Workflow
 
