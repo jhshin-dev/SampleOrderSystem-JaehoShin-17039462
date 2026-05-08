@@ -244,6 +244,11 @@ class MockProductionView : public ProductionView {
 7. 전체 빌드 + 테스트 확인
 ```
 
+> **기존 테스트 변경**: `ProductionControllerTest.ComingSoonOnValidMenu` 제거
+> - Phase 8에서 메뉴 3번이 runProductionMenu()로 구현
+> - ProductionController 전 메뉴(1~4)에 실제 기능 배정 → 준비 중 테스트 불필요
+> - Phase 7의 OrderControllerTest.ComingSoonOnValidMenu 제거와 동일한 패턴
+
 ---
 
 ## 10. 확정 사항
