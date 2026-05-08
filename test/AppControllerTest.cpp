@@ -166,34 +166,38 @@ TEST(OrderControllerTest, InvalidInputShowsError) {
 // ── ProductionController ───────────────────────────────────
 
 TEST(ProductionControllerTest, ExitOnZero) {
-    MockMainView mock; MockSampleView sv; MockSampleRepository sr;
+    MockMainView mock; MockSampleView sv; MockOrderView ov;
+    MockSampleRepository sr; MockOrderRepository or_;
     EXPECT_CALL(mock, showProductionManagerMenu(0, 0)).Times(1);
     EXPECT_CALL(mock, getMenuInput()).WillOnce(Return(0));
 
-    ProductionController ctrl(mock, sv, sr);
+    ProductionController ctrl(mock, sv, ov, sr, or_);
     ctrl.run();
 }
 
 TEST(ProductionControllerTest, ComingSoonOnValidMenu) {
-    MockMainView mock; MockSampleView sv; MockSampleRepository sr;
+    // Phase 5: 3~4번이 준비 중 (2번은 주문 승인·거절 메뉴로 진입)
+    MockMainView mock; MockSampleView sv; MockOrderView ov;
+    MockSampleRepository sr; MockOrderRepository or_;
     EXPECT_CALL(mock, showProductionManagerMenu(0, 0)).Times(2);
     EXPECT_CALL(mock, showComingSoon()).Times(1);
     EXPECT_CALL(mock, getMenuInput())
-        .WillOnce(Return(2))   // 2~4 → 준비 중 (1은 시료 관리로 진입)
+        .WillOnce(Return(3))
         .WillOnce(Return(0));
 
-    ProductionController ctrl(mock, sv, sr);
+    ProductionController ctrl(mock, sv, ov, sr, or_);
     ctrl.run();
 }
 
 TEST(ProductionControllerTest, InvalidInputShowsError) {
-    MockMainView mock; MockSampleView sv; MockSampleRepository sr;
+    MockMainView mock; MockSampleView sv; MockOrderView ov;
+    MockSampleRepository sr; MockOrderRepository or_;
     EXPECT_CALL(mock, showProductionManagerMenu(0, 0)).Times(2);
     EXPECT_CALL(mock, showInvalidInput()).Times(1);
     EXPECT_CALL(mock, getMenuInput())
         .WillOnce(Return(9))
         .WillOnce(Return(0));
 
-    ProductionController ctrl(mock, sv, sr);
+    ProductionController ctrl(mock, sv, ov, sr, or_);
     ctrl.run();
 }

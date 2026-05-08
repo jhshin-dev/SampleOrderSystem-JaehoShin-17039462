@@ -100,7 +100,8 @@ TEST(SM02Test, ShowsAllSamples) {
     EXPECT_CALL(repo, findAll()).WillOnce(Return(samples));
     EXPECT_CALL(sv, showSampleList(samples)).Times(1);
 
-    ProductionController ctrl(mv, sv, repo);
+    MockOrderView ov2; MockOrderRepository or2_;
+    ProductionController ctrl(mv, sv, ov2, repo, or2_);
     ctrl.run();
 }
 
@@ -118,7 +119,8 @@ TEST(SM02Test, ShowsEmptyListWhenNoSamples) {
     EXPECT_CALL(repo, findAll()).WillOnce(Return(std::vector<Sample>{}));
     EXPECT_CALL(sv, showSampleList(std::vector<Sample>{})).Times(1);
 
-    ProductionController ctrl(mv, sv, repo);
+    MockOrderView ov2; MockOrderRepository or2_;
+    ProductionController ctrl(mv, sv, ov2, repo, or2_);
     ctrl.run();
 }
 
@@ -144,7 +146,8 @@ TEST(SM03Test, FindsByKeyword) {
         return v.size() == 1 && v[0].name == "Silicon-A";
     }))).Times(1);
 
-    ProductionController ctrl(mv, sv, repo);
+    MockOrderView ov2; MockOrderRepository or2_;
+    ProductionController ctrl(mv, sv, ov2, repo, or2_);
     ctrl.run();
 }
 
@@ -165,7 +168,8 @@ TEST(SM03Test, ShowsNoResultWhenNotFound) {
     EXPECT_CALL(sv, inputSearchKeyword()).WillOnce(Return("Gallium"));
     EXPECT_CALL(sv, showNoResult()).Times(1);
 
-    ProductionController ctrl(mv, sv, repo);
+    MockOrderView ov2; MockOrderRepository or2_;
+    ProductionController ctrl(mv, sv, ov2, repo, or2_);
     ctrl.run();
 }
 
@@ -188,7 +192,8 @@ TEST(SM03Test, EmptyKeywordMatchesAll) {
         return v.size() == 2;
     }))).Times(1);
 
-    ProductionController ctrl(mv, sv, repo);
+    MockOrderView ov2; MockOrderRepository or2_;
+    ProductionController ctrl(mv, sv, ov2, repo, or2_);
     ctrl.run();
 }
 

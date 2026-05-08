@@ -2,8 +2,11 @@
 #include <gmock/gmock.h>
 #include "../view/SampleView.h"
 #include "../view/MainView.h"
+#include "../view/OrderView.h"
 #include "../model/IRepository.h"
+#include "../model/IOrderRepository.h"
 #include "../model/Sample.h"
+#include "../model/Order.h"
 #include "../controller/ProductionController.h"
 
 using ::testing::Return;
@@ -41,6 +44,34 @@ public:
     MOCK_METHOD(bool,                remove,  (int),            (override));
 };
 
+class MockOrderView : public OrderView {
+public:
+    MOCK_METHOD(int,         inputSampleId,         (), (override));
+    MOCK_METHOD(std::string, inputCustomerName,     (), (override));
+    MOCK_METHOD(int,         inputQuantity,         (), (override));
+    MOCK_METHOD(void, showOrderRegistered,  (const Order&), (override));
+    MOCK_METHOD(void, showOrderList, (const std::vector<Order>&,
+                                     const std::vector<Sample>&), (override));
+    MOCK_METHOD(void, showNoOrders,         (), (override));
+    MOCK_METHOD(void, showInvalidInput,     (const std::string&), (override));
+    MOCK_METHOD(void, showComingSoon,       (), (override));
+    MOCK_METHOD(void, showApprovalMenu,     (), (override));
+    MOCK_METHOD(int,  inputOrderId,         (), (override));
+    MOCK_METHOD(void, showConfirmed,        (const Order&), (override));
+    MOCK_METHOD(void, showSentToProduction, (const Order&), (override));
+    MOCK_METHOD(void, showRejected,         (const Order&), (override));
+};
+
+class MockOrderRepository : public IOrderRepository {
+public:
+    MOCK_METHOD(Order,               create,       (Order),           (override));
+    MOCK_METHOD(std::vector<Order>,  findAll,      (),                (override));
+    MOCK_METHOD(std::optional<Order>,findById,     (int),             (override));
+    MOCK_METHOD(bool,                update,       (const Order&),    (override));
+    MOCK_METHOD(bool,                remove,       (int),             (override));
+    MOCK_METHOD(bool,                updateStatus, (int, OrderStatus),(override));
+};
+
 } // namespace
 
 // 실제 호출 순서 (RegisterSampleSuccess):
@@ -71,7 +102,8 @@ TEST(SM01Test, RegisterSampleSuccess) {
     EXPECT_CALL(repo, create(_)).WillOnce(Return(created));
     EXPECT_CALL(sampleView, showRegistered(_)).Times(1);
 
-    ProductionController ctrl(mainView, sampleView, repo);
+    MockOrderView orderView; MockOrderRepository orderRepo;
+    ProductionController ctrl(mainView, sampleView, orderView, repo, orderRepo);
     ctrl.run();
 }
 
@@ -92,7 +124,8 @@ TEST(SM01Test, RejectsEmptyName) {
     EXPECT_CALL(sampleView, showInvalidInput(_)).Times(1);
     EXPECT_CALL(repo, create(_)).Times(0);
 
-    ProductionController ctrl(mainView, sampleView, repo);
+    MockOrderView orderView; MockOrderRepository orderRepo;
+    ProductionController ctrl(mainView, sampleView, orderView, repo, orderRepo);
     ctrl.run();
 }
 
@@ -114,7 +147,8 @@ TEST(SM01Test, RejectsNonPositiveAvgTime) {
     EXPECT_CALL(sampleView, showInvalidInput(_)).Times(1);
     EXPECT_CALL(repo, create(_)).Times(0);
 
-    ProductionController ctrl(mainView, sampleView, repo);
+    MockOrderView orderView; MockOrderRepository orderRepo;
+    ProductionController ctrl(mainView, sampleView, orderView, repo, orderRepo);
     ctrl.run();
 }
 
@@ -137,7 +171,8 @@ TEST(SM01Test, RejectsYieldZero) {
     EXPECT_CALL(sampleView, showInvalidInput(_)).Times(1);
     EXPECT_CALL(repo, create(_)).Times(0);
 
-    ProductionController ctrl(mainView, sampleView, repo);
+    MockOrderView orderView; MockOrderRepository orderRepo;
+    ProductionController ctrl(mainView, sampleView, orderView, repo, orderRepo);
     ctrl.run();
 }
 
@@ -160,6 +195,7 @@ TEST(SM01Test, RejectsYieldAboveOne) {
     EXPECT_CALL(sampleView, showInvalidInput(_)).Times(1);
     EXPECT_CALL(repo, create(_)).Times(0);
 
-    ProductionController ctrl(mainView, sampleView, repo);
+    MockOrderView orderView; MockOrderRepository orderRepo;
+    ProductionController ctrl(mainView, sampleView, orderView, repo, orderRepo);
     ctrl.run();
 }

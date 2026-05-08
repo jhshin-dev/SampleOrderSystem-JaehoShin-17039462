@@ -9,7 +9,7 @@ AppController::AppController(MainView& mainView,
     : mainView_(mainView),
       sampleRepo_(sampleRepo),
       orderCtrl_(mainView, orderView, sampleRepo, orderRepo),
-      prodCtrl_(mainView, sampleView, sampleRepo) {}
+      prodCtrl_(mainView, sampleView, orderView, sampleRepo, orderRepo) {}
 
 void AppController::run() {
     SetConsoleOutputCP(CP_UTF8);

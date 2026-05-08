@@ -16,4 +16,9 @@ public:
     virtual void        showNoOrders();
     virtual void        showInvalidInput(const std::string& msg);
     virtual void        showComingSoon();
+    virtual void        showApprovalMenu();
+    virtual int         inputOrderId();
+    virtual void        showConfirmed(const Order& o);
+    virtual void        showSentToProduction(const Order& o);
+    virtual void        showRejected(const Order& o);
 };

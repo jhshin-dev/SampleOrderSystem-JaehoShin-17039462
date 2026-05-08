@@ -143,6 +143,7 @@
     <ClCompile Include="view\OrderView.cpp" />
     <ClCompile Include="test\OrderRepositoryTest.cpp" />
     <ClCompile Include="test\OR01OR02Test.cpp" />
+    <ClCompile Include="test\OR03OR04Test.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
