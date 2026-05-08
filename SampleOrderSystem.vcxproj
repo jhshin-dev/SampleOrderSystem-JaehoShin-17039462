@@ -106,6 +106,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalIncludeDirectories>$(ProjectDir)src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -128,28 +129,28 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="view\MainView.cpp" />
-    <ClCompile Include="view\SampleView.cpp" />
-    <ClCompile Include="controller\AppController.cpp" />
-    <ClCompile Include="controller\OrderController.cpp" />
-    <ClCompile Include="controller\ProductionController.cpp" />
-    <ClCompile Include="model\SampleRepository.cpp" />
-    <ClCompile Include="test\AppControllerTest.cpp" />
-    <ClCompile Include="test\SampleRepositoryTest.cpp" />
-    <ClCompile Include="test\SM01Test.cpp" />
-    <ClCompile Include="test\SM02SM03Test.cpp" />
-    <ClCompile Include="model\OrderRepository.cpp" />
-    <ClCompile Include="view\OrderView.cpp" />
-    <ClCompile Include="test\OrderRepositoryTest.cpp" />
-    <ClCompile Include="test\OR01OR02Test.cpp" />
-    <ClCompile Include="test\OR03OR04Test.cpp" />
-    <ClCompile Include="view\MonitorView.cpp" />
-    <ClCompile Include="test\MO01MO02Test.cpp" />
-    <ClCompile Include="test\RL01RL02Test.cpp" />
-    <ClCompile Include="view\ProductionView.cpp" />
-    <ClCompile Include="test\PL01PL02Test.cpp" />
-    <ClCompile Include="test\PL03Test.cpp" />
+    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\view\MainView.cpp" />
+    <ClCompile Include="src\view\SampleView.cpp" />
+    <ClCompile Include="src\controller\AppController.cpp" />
+    <ClCompile Include="src\controller\OrderController.cpp" />
+    <ClCompile Include="src\controller\ProductionController.cpp" />
+    <ClCompile Include="src\model\SampleRepository.cpp" />
+    <ClCompile Include="src\test\AppControllerTest.cpp" />
+    <ClCompile Include="src\test\SampleRepositoryTest.cpp" />
+    <ClCompile Include="src\test\SM01Test.cpp" />
+    <ClCompile Include="src\test\SM02SM03Test.cpp" />
+    <ClCompile Include="src\model\OrderRepository.cpp" />
+    <ClCompile Include="src\view\OrderView.cpp" />
+    <ClCompile Include="src\test\OrderRepositoryTest.cpp" />
+    <ClCompile Include="src\test\OR01OR02Test.cpp" />
+    <ClCompile Include="src\test\OR03OR04Test.cpp" />
+    <ClCompile Include="src\view\MonitorView.cpp" />
+    <ClCompile Include="src\test\MO01MO02Test.cpp" />
+    <ClCompile Include="src\test\RL01RL02Test.cpp" />
+    <ClCompile Include="src\view\ProductionView.cpp" />
+    <ClCompile Include="src\test\PL01PL02Test.cpp" />
+    <ClCompile Include="src\test\PL03Test.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -160,7 +161,7 @@
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
-      <ErrorText>이 프로젝트는 이 컴퓨터에 없는 NuGet 패키지를 참조합니다. 해당 패키지를 다운로드하려면 NuGet 패키지 복원을 사용하십시오. 자세한 내용은 http://go.microsoft.com/fwlink/?LinkID=322105를 참조하십시오. 누락된 파일은 {0}입니다.</ErrorText>
+      <ErrorText>???�로?�트????컴퓨?�에 ?�는 NuGet ?�키지�?참조?�니?? ?�당 ?�키지�??�운로드?�려�?NuGet ?�키지 복원???�용?�십?�오. ?�세???�용?� http://go.microsoft.com/fwlink/?LinkID=322105�?참조?�십?�오. ?�락???�일?� {0}?�니??</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('packages\gmock.1.11.0\build\native\gmock.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\gmock.1.11.0\build\native\gmock.targets'))" />
   </Target>
