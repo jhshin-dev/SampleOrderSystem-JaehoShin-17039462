@@ -107,7 +107,7 @@
 
 | ID | 기능 | 설명 |
 |----|------|------|
-| OR-03 | 주문 승인 | `RESERVED` 주문을 승인. 재고 상태에 따라 자동 분기 처리 (아래 참고) |
+| OR-03 | 주문 승인 | `RESERVED` 주문을 승인. `stock >= quantity` → CONFIRMED, `stock < quantity` → PRODUCING 자동 분기 |
 | OR-04 | 주문 거절 | `RESERVED` 주문을 즉시 `REJECTED`로 전이 |
 
 ##### 주문 승인 자동 분기 (OR-03)
@@ -195,7 +195,7 @@
 RESERVED ──→ CONFIRMED   (승인 + 재고 충분)
          ──→ PRODUCING   (승인 + 재고 부족 → 생산 라인 자동 등록)
          ──→ REJECTED    (거절)
-PRODUCING ──→ CONFIRMED  (생산 완료 후 승인)
+PRODUCING ──→ CONFIRMED  (생산 완료 시 자동 전이)
 CONFIRMED ──→ RELEASED   (출고 처리)
 ```
 

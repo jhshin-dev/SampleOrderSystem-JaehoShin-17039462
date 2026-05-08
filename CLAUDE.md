@@ -69,7 +69,7 @@ struct Order {
 RESERVED ──→ CONFIRMED   (승인 + 재고 충분: stock >= quantity)
          ──→ PRODUCING   (승인 + 재고 부족: stock < quantity → 생산 라인 자동 등록)
          ──→ REJECTED    (거절)
-PRODUCING ──→ CONFIRMED  (생산 완료)
+PRODUCING ──→ CONFIRMED  (생산 완료 시 자동 전이)
 CONFIRMED ──→ RELEASED   (출고 처리)
 ```
 `isValidTransition(from, to)` 으로 전이 유효성 검증. RELEASED 상태의 주문은 삭제 불가.
@@ -115,6 +115,11 @@ virtual bool               remove(int id)          = 0;
 **`JsonRepository<T>`** (구현체) — nlohmann/json으로 파일 직렬화, auto-increment ID 관리.
 
 **`OrderRepository`** — `JsonRepository<Order>` 상속, 상태 전이 검증 및 ISO 8601 타임스탬프 자동 설정.
+
+```cpp
+// IRepository<T> 외 OrderRepository 전용 메서드
+bool updateStatus(int id, OrderStatus newStatus);
+```
 
 ### 모니터링 / 더미 데이터 도구 (PoC 참고)
 

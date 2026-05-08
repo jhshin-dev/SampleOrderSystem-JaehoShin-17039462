@@ -57,7 +57,8 @@ OrderRepository::findAll() → status == CONFIRMED 필터
     │
     └─ 유효 → OrderRepository::updateStatus(RELEASED)
                   └─ updatedAt 갱신
-                  └─ orders.json 저장
+                  └─ Sample.stock -= Order.quantity  (출고 수량만큼 재고 차감)
+                  └─ orders.json / samples.json 저장
                   └─ "출고 처리가 완료되었습니다" 출력
 ```
 
@@ -81,3 +82,5 @@ CONFIRMED ──→ RELEASED   (출고 처리 완료)
 - `OrderRepository::findAll()` — RL-01
 - `OrderRepository::findById()` — RL-02 상태 검증
 - `OrderRepository::updateStatus()` — RL-02 출고 실행
+- `SampleRepository::findById()` — RL-02 재고 차감 대상 시료 조회
+- `SampleRepository::update()` — RL-02 stock 차감 후 저장
