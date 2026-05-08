@@ -145,6 +145,21 @@ int main(int argc, char** argv) {
 - `packages/` 디렉터리는 `.gitignore`에 포함되어 있어 git에서 제외됨
 - 로컬 빌드 시 `packages/gmock.1.11.0/` 디렉터리가 존재해야 함
 
+## Documentation
+
+기능 구현 전 아래 문서를 참고한다.
+
+| 문서 | 설명 |
+|------|------|
+| `AGENTS.md` | 문서 구조 인덱스, 읽기 순서, 핵심 비즈니스 규칙 빠른 참조 |
+| `docs/PRD.md` | 전체 기능 범위, 상태 전이, 도메인 모델, 비기능 요구사항 |
+| `docs/features/MM-main-menu.md` | 메인 메뉴 화면 구성 및 네비게이션 흐름 |
+| `docs/features/SM-sample-management.md` | 시료 등록·조회·검색 입력값·검증·흐름 |
+| `docs/features/OR-order.md` | 주문 접수·승인(재고 분기)·거절 흐름 및 제약 |
+| `docs/features/MO-monitoring.md` | 주문량·재고량 현황, 재고 상태 3단계 기준 |
+| `docs/features/RL-release.md` | 출고 처리 가드 조건 및 RELEASED 제약 |
+| `docs/features/PL-production-line.md` | 생산량 공식, FIFO 큐, 생산 완료 stock 반영 |
+
 ## Development Workflow
 
 모든 테스트는 **Google Test (gtest)** 로 작성한다. `TEST()` / `TEST_F()` 매크로를 사용하고, mock이 필요한 경우 gmock(`MOCK_METHOD`)을 함께 활용한다.
