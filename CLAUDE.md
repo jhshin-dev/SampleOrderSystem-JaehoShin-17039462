@@ -92,7 +92,7 @@ model/
     Sample.h / Order.h / OrderStatus.h
     SampleRepository / OrderRepository   (JsonRepository<T> 상속)
 view/
-    OrderView / ProductionView
+    MainView / SampleView
 lib/
     json.hpp             nlohmann/json v3.11.3 (헤더 온리)
 data/
