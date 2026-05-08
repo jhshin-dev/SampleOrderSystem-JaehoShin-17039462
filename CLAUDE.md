@@ -8,6 +8,11 @@ C++20 기반 반도체 시료 생산주문관리 시스템. Visual Studio 2022 (
 
 역할 분리된 두 사용자: **주문 담당자(Order Manager)** 와 **생산 담당자(Production Manager)**.
 
+| 역할 | 담당 기능 |
+|------|-----------|
+| 주문 담당자 | 주문 접수(OR-01·02), 출고 처리(RL-01·02), 모니터링(MO-01·02) |
+| 생산 담당자 | 시료 관리(SM-01~03), 주문 승인·거절(OR-03·04), 생산 라인(PL-01~03), 모니터링(MO-01·02) |
+
 ## Build & Test Commands
 
 MSBuild 경로: `C:\Program Files\Microsoft Visual Studio\18\Community\MSBuild\Current\Bin\MSBuild.exe`
@@ -81,8 +86,8 @@ CONFIRMED ──→ RELEASED   (출고 처리)
 
 ```
 controller/
-    OrderController      주문 등록·목록·출고(processRelease)
-    ProductionController  시료 등록·주문 승인/반려·생산 목록·생산 완료
+    OrderController       주문 접수·목록(OR-01·02), 출고 처리(RL-01·02), 모니터링(MO)
+    ProductionController  시료 관리(SM), 주문 승인·거절(OR-03·04), 생산 라인(PL), 모니터링(MO)
 model/
     Sample.h / Order.h / OrderStatus.h
     SampleRepository / OrderRepository   (JsonRepository<T> 상속)
