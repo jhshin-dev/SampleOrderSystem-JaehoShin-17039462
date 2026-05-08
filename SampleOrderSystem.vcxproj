@@ -146,6 +146,7 @@
     <ClCompile Include="test\OR03OR04Test.cpp" />
     <ClCompile Include="view\MonitorView.cpp" />
     <ClCompile Include="test\MO01MO02Test.cpp" />
+    <ClCompile Include="test\RL01RL02Test.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

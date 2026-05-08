@@ -21,4 +21,7 @@ public:
     virtual void        showConfirmed(const Order& o);
     virtual void        showSentToProduction(const Order& o);
     virtual void        showRejected(const Order& o);
+    virtual void        showReleaseMenu();
+    virtual void        showReleased(const Order& o);
+    virtual void        showNoConfirmedOrders();
 };

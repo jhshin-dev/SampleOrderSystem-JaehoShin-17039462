@@ -19,7 +19,7 @@ void OrderController::run() {
         else if (input == 2)
             listReservedOrders();
         else if (input == 3)
-            orderView_.showComingSoon();
+            runReleaseMenu();
         else if (input == 4)
             runMonitor();
         else
@@ -78,4 +78,46 @@ void OrderController::showOrderStatus() {
 
 void OrderController::showStockStatus() {
     monitorView_.showStockStatus(sampleRepo_.findAll(), orderRepo_.findAll());
+}
+
+void OrderController::runReleaseMenu() {
+    while (true) {
+        orderView_.showReleaseMenu();
+        int input = mainView_.getMenuInput();
+        if (input == 0) break;
+        if (input == 1)      listConfirmedOrders();
+        else if (input == 2) executeRelease();
+        else                 mainView_.showInvalidInput();
+    }
+}
+
+void OrderController::listConfirmedOrders() {
+    auto all = orderRepo_.findAll();
+    std::vector<Order> confirmed;
+    for (const auto& o : all)
+        if (o.status == OrderStatus::CONFIRMED)
+            confirmed.push_back(o);
+    if (confirmed.empty()) { orderView_.showNoConfirmedOrders(); return; }
+    orderView_.showOrderList(confirmed, sampleRepo_.findAll());
+}
+
+void OrderController::executeRelease() {
+    int id = orderView_.inputOrderId();
+    auto found = orderRepo_.findById(id);
+    if (!found) {
+        orderView_.showInvalidInput("존재하지 않는 주문입니다.");
+        return;
+    }
+    if (found->status != OrderStatus::CONFIRMED) {
+        orderView_.showInvalidInput("CONFIRMED 상태의 주문만 출고할 수 있습니다.");
+        return;
+    }
+    orderRepo_.updateStatus(id, OrderStatus::RELEASED);
+    auto sample = sampleRepo_.findById(found->sampleId);
+    if (sample) {
+        Sample updated = *sample;
+        updated.stock -= found->quantity;
+        sampleRepo_.update(updated);
+    }
+    orderView_.showReleased(*found);
 }

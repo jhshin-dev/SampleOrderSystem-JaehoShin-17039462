@@ -26,4 +26,7 @@ private:
     void runMonitor();
     void showOrderStatus();
     void showStockStatus();
+    void runReleaseMenu();
+    void listConfirmedOrders();
+    void executeRelease();
 };

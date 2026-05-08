@@ -152,20 +152,6 @@ TEST(OrderControllerTest, ExitOnZero) {
     ctrl.run();
 }
 
-TEST(OrderControllerTest, ComingSoonOnValidMenu) {
-    // Phase 4: 3~4번 입력이 준비 중(orderView_.showComingSoon())
-    MockMainView mock; MockOrderView ov; MockMonitorView mon;
-    MockSampleRepository sr; MockOrderRepository or_;
-    EXPECT_CALL(mock, showOrderManagerMenu(0, 0)).Times(2);
-    EXPECT_CALL(ov, showComingSoon()).Times(1);
-    EXPECT_CALL(mock, getMenuInput())
-        .WillOnce(Return(3))   // 출고 처리 (준비 중)
-        .WillOnce(Return(0));
-
-    OrderController ctrl(mock, ov, mon, sr, or_);
-    ctrl.run();
-}
-
 TEST(OrderControllerTest, InvalidInputShowsError) {
     MockMainView mock; MockOrderView ov; MockMonitorView mon;
     MockSampleRepository sr; MockOrderRepository or_;

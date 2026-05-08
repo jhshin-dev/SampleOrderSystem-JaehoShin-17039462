@@ -109,3 +109,23 @@ void OrderView::showRejected(const Order& o) {
     std::cout << "\n  [거절 완료] 주문 " << o.id
               << "이(가) REJECTED 상태로 전환되었습니다.\n";
 }
+
+void OrderView::showReleaseMenu() {
+    std::cout << "\n========================================\n";
+    std::cout << "  [출고 처리]\n";
+    std::cout << "========================================\n";
+    std::cout << " 1. CONFIRMED 주문 목록\n";
+    std::cout << " 2. 출고 실행\n";
+    std::cout << " 0. 돌아가기\n";
+    std::cout << "========================================\n";
+    std::cout << "선택: ";
+}
+
+void OrderView::showReleased(const Order& o) {
+    std::cout << "\n  [출고 완료] 주문 " << o.id
+              << "이(가) RELEASED 상태로 전환되었습니다.\n";
+}
+
+void OrderView::showNoConfirmedOrders() {
+    std::cout << "\n  출고 가능한 주문이 없습니다.\n";
+}
