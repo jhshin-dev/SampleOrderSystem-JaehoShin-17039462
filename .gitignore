@@ -27,3 +27,4 @@ packages/
 
 # Claude Code
 .claude/
+.mcp.json
