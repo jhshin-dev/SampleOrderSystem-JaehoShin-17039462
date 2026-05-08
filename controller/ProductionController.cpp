@@ -1,4 +1,5 @@
 #include "ProductionController.h"
+#include <vector>
 
 ProductionController::ProductionController(MainView& mainView,
                                            SampleView& sampleView,
@@ -26,11 +27,31 @@ void ProductionController::runSampleMenu() {
         if (input == 0) break;
         if (input == 1)
             registerSample();
-        else if (input >= 2 && input <= 3)
-            sampleView_.showComingSoon();
+        else if (input == 2)
+            listSamples();
+        else if (input == 3)
+            searchSamples();
         else
             mainView_.showInvalidInput();
     }
+}
+
+void ProductionController::listSamples() {
+    auto samples = sampleRepo_.findAll();
+    sampleView_.showSampleList(samples);
+}
+
+void ProductionController::searchSamples() {
+    std::string keyword = sampleView_.inputSearchKeyword();
+    auto all = sampleRepo_.findAll();
+    std::vector<Sample> result;
+    for (const auto& s : all)
+        if (s.name.find(keyword) != std::string::npos)
+            result.push_back(s);
+    if (result.empty())
+        sampleView_.showNoResult();
+    else
+        sampleView_.showSampleList(result);
 }
 
 void ProductionController::registerSample() {

@@ -8,6 +8,12 @@ struct Sample {
     int         avgProductionTime = 0;
     double      yield             = 0.0;
     int         stock             = 0;
+
+    bool operator==(const Sample& o) const {
+        return id == o.id && name == o.name
+            && avgProductionTime == o.avgProductionTime
+            && yield == o.yield && stock == o.stock;
+    }
 };
 
 inline void to_json(nlohmann::json& j, const Sample& s) {

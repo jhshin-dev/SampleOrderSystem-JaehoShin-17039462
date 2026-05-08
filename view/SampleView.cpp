@@ -1,7 +1,9 @@
 #include "SampleView.h"
 #include <iostream>
+#include <iomanip>
 #include <limits>
 #include <string>
+#include <vector>
 
 void SampleView::showSampleMenu() {
     std::cout << "\n========================================\n";
@@ -55,4 +57,36 @@ void SampleView::showInvalidInput(const std::string& msg) {
 
 void SampleView::showComingSoon() {
     std::cout << "\n  [준비 중입니다. 다음 버전에서 제공됩니다.]\n";
+}
+
+void SampleView::showSampleList(const std::vector<Sample>& samples) {
+    if (samples.empty()) {
+        std::cout << "\n  등록된 시료가 없습니다.\n";
+        return;
+    }
+    std::cout << "\n";
+    std::cout << "  ┌────┬──────────────────────┬──────────┬──────┬──────┐\n";
+    std::cout << "  │ ID │ 이름                 │ 생산시간 │ 수율 │ 재고 │\n";
+    std::cout << "  ├────┼──────────────────────┼──────────┼──────┼──────┤\n";
+    for (const auto& s : samples) {
+        std::cout << "  │"
+                  << std::setw(3) << s.id       << " │"
+                  << std::setw(21) << std::left << s.name << std::right << " │"
+                  << std::setw(7)  << s.avgProductionTime << "분  │"
+                  << std::setw(5)  << std::fixed << std::setprecision(2) << s.yield << " │"
+                  << std::setw(5)  << s.stock    << " │\n";
+    }
+    std::cout << "  └────┴──────────────────────┴──────────┴──────┴──────┘\n";
+}
+
+std::string SampleView::inputSearchKeyword() {
+    std::cout << "  검색어: ";
+    std::string keyword;
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    std::getline(std::cin, keyword);
+    return keyword;
+}
+
+void SampleView::showNoResult() {
+    std::cout << "\n  검색 결과가 없습니다.\n";
 }

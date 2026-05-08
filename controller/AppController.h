@@ -14,6 +14,7 @@ public:
     void run();
 private:
     MainView&            mainView_;
+    IRepository<Sample>& sampleRepo_;
     OrderController      orderCtrl_;
     ProductionController prodCtrl_;
 };

@@ -17,4 +17,6 @@ private:
 
     void runSampleMenu();
     void registerSample();
+    void listSamples();
+    void searchSamples();
 };

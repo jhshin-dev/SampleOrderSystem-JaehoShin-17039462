@@ -13,7 +13,7 @@ namespace {
 
 class MockMainView : public MainView {
 public:
-    MOCK_METHOD(void, showRoleMenu,              (), (override));
+    MOCK_METHOD(void, showRoleMenu,              (int, int), (override));
     MOCK_METHOD(void, showOrderManagerMenu,      (int, int), (override));
     MOCK_METHOD(void, showProductionManagerMenu, (int, int), (override));
     MOCK_METHOD(void, showComingSoon,            (), (override));

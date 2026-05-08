@@ -2,9 +2,10 @@
 #include <iostream>
 #include <limits>
 
-void MainView::showRoleMenu() {
+void MainView::showRoleMenu(int sampleCount, int totalStock) {
     std::cout << "\n========================================\n";
     std::cout << "  반도체 시료 생산주문관리 시스템\n";
+    std::cout << "  [요약] 시료: " << sampleCount << "종  총 재고: " << totalStock << "개\n";
     std::cout << "========================================\n";
     std::cout << " 1. 주문 담당자\n";
     std::cout << " 2. 생산 담당자\n";

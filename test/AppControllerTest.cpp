@@ -10,10 +10,11 @@
 
 using ::testing::Return;
 using ::testing::InSequence;
+using ::testing::_;
 
 class MockMainView : public MainView {
 public:
-    MOCK_METHOD(void, showRoleMenu,              (), (override));
+    MOCK_METHOD(void, showRoleMenu,              (int, int), (override));
     MOCK_METHOD(void, showOrderManagerMenu,      (int, int), (override));
     MOCK_METHOD(void, showProductionManagerMenu, (int, int), (override));
     MOCK_METHOD(void, showComingSoon,            (), (override));
@@ -45,30 +46,32 @@ public:
 
 TEST(AppControllerTest, ExitOnZero) {
     MockMainView mock;
-    EXPECT_CALL(mock, showRoleMenu()).Times(1);
+    EXPECT_CALL(mock, showRoleMenu(_, _)).Times(1);
     EXPECT_CALL(mock, getMenuInput()).WillOnce(Return(0));
 
     MockSampleView sv; MockSampleRepository sr;
+    EXPECT_CALL(sr, findAll()).WillRepeatedly(Return(std::vector<Sample>{}));
     AppController ctrl(mock, sv, sr);
     ctrl.run();
 }
 
 TEST(AppControllerTest, InvalidInputShowsError) {
     MockMainView mock;
-    EXPECT_CALL(mock, showRoleMenu()).Times(2);
+    EXPECT_CALL(mock, showRoleMenu(_, _)).Times(2);
     EXPECT_CALL(mock, showInvalidInput()).Times(1);
     EXPECT_CALL(mock, getMenuInput())
         .WillOnce(Return(9))
         .WillOnce(Return(0));
 
     MockSampleView sv; MockSampleRepository sr;
+    EXPECT_CALL(sr, findAll()).WillRepeatedly(Return(std::vector<Sample>{}));
     AppController ctrl(mock, sv, sr);
     ctrl.run();
 }
 
 TEST(AppControllerTest, SelectOrderManager) {
     MockMainView mock;
-    EXPECT_CALL(mock, showRoleMenu()).Times(2);
+    EXPECT_CALL(mock, showRoleMenu(_, _)).Times(2);
     EXPECT_CALL(mock, showOrderManagerMenu(0, 0)).Times(1);
     EXPECT_CALL(mock, getMenuInput())
         .WillOnce(Return(1))   // 역할 선택: 주문 담당자
@@ -76,13 +79,14 @@ TEST(AppControllerTest, SelectOrderManager) {
         .WillOnce(Return(0));  // 역할 선택: 종료
 
     MockSampleView sv; MockSampleRepository sr;
+    EXPECT_CALL(sr, findAll()).WillRepeatedly(Return(std::vector<Sample>{}));
     AppController ctrl(mock, sv, sr);
     ctrl.run();
 }
 
 TEST(AppControllerTest, SelectProductionManager) {
     MockMainView mock;
-    EXPECT_CALL(mock, showRoleMenu()).Times(2);
+    EXPECT_CALL(mock, showRoleMenu(_, _)).Times(2);
     EXPECT_CALL(mock, showProductionManagerMenu(0, 0)).Times(1);
     EXPECT_CALL(mock, getMenuInput())
         .WillOnce(Return(2))   // 역할 선택: 생산 담당자
@@ -90,6 +94,7 @@ TEST(AppControllerTest, SelectProductionManager) {
         .WillOnce(Return(0));  // 역할 선택: 종료
 
     MockSampleView sv; MockSampleRepository sr;
+    EXPECT_CALL(sr, findAll()).WillRepeatedly(Return(std::vector<Sample>{}));
     AppController ctrl(mock, sv, sr);
     ctrl.run();
 }

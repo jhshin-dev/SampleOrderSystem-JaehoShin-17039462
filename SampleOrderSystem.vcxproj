@@ -138,6 +138,7 @@
     <ClCompile Include="test\AppControllerTest.cpp" />
     <ClCompile Include="test\SampleRepositoryTest.cpp" />
     <ClCompile Include="test\SM01Test.cpp" />
+    <ClCompile Include="test\SM02SM03Test.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

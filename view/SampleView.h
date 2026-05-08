@@ -12,4 +12,7 @@ public:
     virtual void        showRegistered(const Sample& s);
     virtual void        showInvalidInput(const std::string& msg);
     virtual void        showComingSoon();
+    virtual void        showSampleList(const std::vector<Sample>& samples);
+    virtual std::string inputSearchKeyword();
+    virtual void        showNoResult();
 };
