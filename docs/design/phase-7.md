@@ -140,6 +140,10 @@ orderView_.showOrderList(confirmed, sampleRepo_.findAll());
 5. 전체 빌드 + 테스트 확인
 ```
 
+> **기존 테스트 변경**: `OrderControllerTest.ComingSoonOnValidMenu` 제거
+> - Phase 7에서 메뉴 3번이 runReleaseMenu()로 구현되어 showComingSoon() 호출 없음
+> - OrderController 전 메뉴(1~4)에 실제 기능이 구현되어 "준비 중" 테스트 불필요
+
 ---
 
 ## 8. 검토 포인트
