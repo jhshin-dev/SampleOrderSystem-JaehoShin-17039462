@@ -13,6 +13,7 @@
 model/
     OrderStatus.h             OrderStatus enum + isValidTransition()
     Order.h                   Order 구조체 + to_json / from_json
+    IOrderRepository.h        IRepository<Order> + updateStatus() 확장 인터페이스
     OrderRepository.h
     OrderRepository.cpp       create() 시 RESERVED 강제, ISO 8601 타임스탬프 자동
 view/
@@ -125,21 +126,37 @@ inline void from_json(const nlohmann::json& j, Order& o) {
 
 ---
 
-## 4. OrderRepository
+## 4. Repository 계층
+
+### IOrderRepository.h — 확장 인터페이스
+
+```cpp
+#pragma once
+#include "IRepository.h"
+#include "Order.h"
+
+class IOrderRepository : public IRepository<Order> {
+public:
+    virtual bool updateStatus(int id, OrderStatus newStatus) = 0;
+};
+```
+
+> `IRepository<Order>` CRUD + `updateStatus()` 를 포함한 인터페이스.
+> OrderController는 이 인터페이스를 주입받아 Mock 테스트가 가능하다.
 
 ### OrderRepository.h
 
 ```cpp
 #pragma once
+#include "IOrderRepository.h"
 #include "JsonRepository.h"
-#include "Order.h"
 
-class OrderRepository : public JsonRepository<Order> {
+class OrderRepository : public JsonRepository<Order>, public IOrderRepository {
 public:
     explicit OrderRepository(const std::string& filePath = "data/orders.json");
     Order create(Order entity) override;        // RESERVED 강제, 타임스탬프 자동
     bool  remove(int id)       override;        // RELEASED 삭제 불가
-    bool  updateStatus(int id, OrderStatus newStatus);
+    bool  updateStatus(int id, OrderStatus newStatus) override;
 
 private:
     static std::string nowIso8601();
@@ -200,21 +217,21 @@ public:
 #include "../view/MainView.h"
 #include "../view/OrderView.h"
 #include "../model/IRepository.h"
+#include "../model/IOrderRepository.h"
 #include "../model/Sample.h"
-#include "../model/OrderRepository.h"
 
 class OrderController {
 public:
     OrderController(MainView& mainView,
                     OrderView& orderView,
                     IRepository<Sample>& sampleRepo,
-                    OrderRepository& orderRepo);
+                    IOrderRepository& orderRepo);
     void run();
 private:
     MainView&            mainView_;
     OrderView&           orderView_;
     IRepository<Sample>& sampleRepo_;
-    OrderRepository&     orderRepo_;
+    IOrderRepository&    orderRepo_;
 
     void receiveOrder();           // OR-01
     void listReservedOrders();     // OR-02
@@ -269,6 +286,7 @@ app.run();
 
 ```xml
 <ClCompile Include="model\OrderRepository.cpp" />
+<!-- IOrderRepository.h는 헤더 온리 인터페이스 — ClCompile 불필요 -->
 <ClCompile Include="view\OrderView.cpp" />
 <ClCompile Include="test\OrderRepositoryTest.cpp" />
 <ClCompile Include="test\OR01OR02Test.cpp" />
@@ -322,8 +340,7 @@ app.run();
 
 ## 10. 검토 포인트
 
-- `OrderRepository`가 `updateStatus()` 메서드를 별도로 가지는 구조 — 동의하는가?
-  (CLAUDE.md에 이미 명시된 설계)
+- [확정] `IOrderRepository` 인터페이스 신설(updateStatus 포함) — Phase 2 패턴과 일치, Mock 가능
 - `AppController` 생성자 인수가 늘어남 (mainView, orderView, sampleView, sampleRepo, orderRepo)
   — 추후 구조체로 묶는 리팩터링을 고려하는가, 아니면 현재 방식 유지하는가?
 - `OrderView::showOrderList()`에서 시료명을 표시하기 위해 `SampleRepository`를 직접 받는 대신
