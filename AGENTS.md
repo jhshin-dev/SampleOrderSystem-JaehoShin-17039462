@@ -50,13 +50,19 @@ docs/
 ## Phase 개발 워크플로
 
 ```
-설계 문서 작성 → [커밋] → /doc-verify → [변경 시 커밋] → 구현(TDD)
-→ /compliance-verify N → /test-verify N → [커밋] → 사람 리뷰
+설계 문서 작성 → [커밋]
+→ /doc-verify → [변경 시 커밋]
+→ 구현(TDD)
+→ /compliance-verify N → [설계 문서 변경 시 커밋]
+→ /test-verify N → [설계 문서 변경 시 커밋]
+→ [구현 코드 커밋]  ← 아래 3가지 조건 모두 충족 후
+→ 사람 리뷰
 ```
 
-- 설계 문서 작성 직후 커밋
-- /doc-verify 후 변경사항이 있으면 커밋한 뒤 다음 단계 진행
-- 구현 코드 커밋은 `/compliance-verify`와 `/test-verify`가 모두 PASS된 후에 생성
+**구현 코드 커밋 조건 (모두 충족 필요):**
+1. 설계 문서 변경사항 커밋 완료
+2. `/compliance-verify` PASS
+3. `/test-verify` PASS
 
 ---
 

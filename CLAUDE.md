@@ -195,12 +195,17 @@ int main(int argc, char** argv) {
    └─ 커밋              변경사항 있으면 커밋 후 다음 단계 진행
 3. 구현 (TDD)           /tdd 스킬 참고, RED → GREEN → REFACTOR
 4. /compliance-verify N 구현이 설계·PLAN을 충족하는지 검사
+   └─ 커밋              설계 문서 수정사항 있으면 커밋
 5. /test-verify N       빌드·단위·스모크 테스트 자동 수행
-6. 커밋                 4·5 모두 PASS 후에 구현 코드를 커밋
+   └─ 커밋              설계 문서 수정사항 있으면 커밋
+6. 커밋                 구현 코드 커밋
 7. 사람 직접 리뷰       고객 테스트 포인트 확인
 ```
 
-> 구현 코드 커밋은 `/compliance-verify`와 `/test-verify` 가 모두 통과한 뒤에 생성한다.
+> **구현 코드 커밋 조건 (모두 충족 필요):**
+> 1. 설계 문서 변경사항 커밋 완료
+> 2. `/compliance-verify` PASS
+> 3. `/test-verify` PASS
 
 모든 변경사항은 커밋으로 정리하며 `git push origin master`로 원격 반영:
 - Remote: `https://github.com/jhshin-dev/SampleOrderSystem-JaehoShin-17039462.git`

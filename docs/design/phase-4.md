@@ -158,6 +158,11 @@ public:
     bool  remove(int id)       override;        // RELEASED 삭제 불가
     bool  updateStatus(int id, OrderStatus newStatus) override;
 
+    // 다중 상속(JsonRepository + IOrderRepository) 모호성 해결용 포워딩
+    std::vector<Order>   findAll()              override;
+    std::optional<Order> findById(int id)       override;
+    bool                 update(const Order& o) override;
+
 private:
     static std::string nowIso8601();
 };
