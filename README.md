@@ -83,24 +83,24 @@ CONFIRMED ──→ RELEASED   (출고 처리)
 
 ```
 SampleOrderSystem/
-├── controller/          MVC Controller 계층
-│   ├── AppController    역할 선택 및 전체 흐름 제어
-│   ├── OrderController  주문 담당자 기능 (OR, RL, MO)
-│   └── ProductionController  생산 담당자 기능 (SM, OR-03·04, PL, MO)
-├── model/               도메인 모델 및 Repository
-│   ├── Sample.h / Order.h / OrderStatus.h
-│   ├── ProductionEntry.h
-│   ├── IRepository.h / JsonRepository.h
-│   ├── IOrderRepository.h
-│   ├── SampleRepository / OrderRepository
-│   └── lib/json.hpp     nlohmann/json v3.11.3
-├── view/                콘솔 I/O View 계층
-│   ├── MainView         역할 선택 메뉴
-│   ├── SampleView       시료 관련 I/O
-│   ├── OrderView        주문 관련 I/O
-│   ├── MonitorView      모니터링 출력
-│   └── ProductionView   생산 라인 I/O
-├── test/                gtest 단위 테스트
+├── src/                 소스 코드 루트
+│   ├── main.cpp         진입점 (앱 모드 / 테스트 모드 분기)
+│   ├── controller/      MVC Controller 계층
+│   │   ├── AppController    역할 선택 및 전체 흐름 제어
+│   │   ├── OrderController  주문 담당자 기능 (OR, RL, MO)
+│   │   └── ProductionController  생산 담당자 기능 (SM, OR-03·04, PL, MO)
+│   ├── model/           도메인 모델 및 Repository
+│   │   ├── Sample.h / Order.h / OrderStatus.h / ProductionEntry.h
+│   │   ├── IRepository.h / JsonRepository.h / IOrderRepository.h
+│   │   ├── SampleRepository / OrderRepository
+│   │   └── lib/json.hpp     nlohmann/json v3.11.3
+│   ├── view/            콘솔 I/O View 계층
+│   │   ├── MainView         역할 선택 메뉴
+│   │   ├── SampleView       시료 관련 I/O
+│   │   ├── OrderView        주문 관련 I/O
+│   │   ├── MonitorView      모니터링 출력
+│   │   └── ProductionView   생산 라인 I/O
+│   └── test/            gtest 단위 테스트
 ├── data/                런타임 생성 JSON 파일 (gitignore)
 │   ├── samples.json
 │   └── orders.json
