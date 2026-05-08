@@ -169,6 +169,15 @@ int main(int argc, char** argv) {
 | `docs/features/MO-monitoring.md` | 주문량·재고량 현황, 재고 상태 3단계 기준 |
 | `docs/features/RL-release.md` | 출고 처리 가드 조건 및 RELEASED 제약 |
 | `docs/features/PL-production-line.md` | 생산량 공식, FIFO 큐, 생산 완료 stock 반영 |
+| `docs/PLAN.md` | Phase별 개발 목표 및 고객 테스트 포인트 |
+
+### Phase 설계 문서
+
+각 Phase 구현 전 `docs/design/phase-N.md`를 작성하고 검토 후 개발한다.
+
+| 문서 | Phase | 상태 |
+|------|-------|------|
+| `docs/design/phase-1.md` | 메인 메뉴 (역할 선택·네비게이션) | 설계 완료 |
 
 ## Development Workflow
 
