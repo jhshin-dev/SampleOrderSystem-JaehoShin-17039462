@@ -143,10 +143,11 @@ public:
 
 class AppController {
 public:
+    explicit AppController(MainView& view);
     void run();
 private:
-    MainView            view_;
-    OrderController     orderCtrl_;
+    MainView&            view_;
+    OrderController      orderCtrl_;
     ProductionController prodCtrl_;
 };
 ```
