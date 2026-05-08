@@ -4,10 +4,11 @@
 ProductionController::ProductionController(MainView& mainView,
                                            SampleView& sampleView,
                                            OrderView& orderView,
+                                           MonitorView& monitorView,
                                            IRepository<Sample>& sampleRepo,
                                            IOrderRepository& orderRepo)
     : mainView_(mainView), sampleView_(sampleView), orderView_(orderView),
-      sampleRepo_(sampleRepo), orderRepo_(orderRepo) {}
+      monitorView_(monitorView), sampleRepo_(sampleRepo), orderRepo_(orderRepo) {}
 
 void ProductionController::run() {
     while (true) {
@@ -18,8 +19,10 @@ void ProductionController::run() {
             runSampleMenu();
         else if (input == 2)
             runOrderApprovalMenu();
-        else if (input >= 3 && input <= 4)
+        else if (input == 3)
             mainView_.showComingSoon();
+        else if (input == 4)
+            runMonitor();
         else
             mainView_.showInvalidInput();
     }
@@ -151,4 +154,23 @@ void ProductionController::rejectOrder() {
     }
     orderRepo_.updateStatus(id, OrderStatus::REJECTED);
     orderView_.showRejected(*found);
+}
+
+void ProductionController::runMonitor() {
+    while (true) {
+        monitorView_.showMonitorMenu();
+        int input = mainView_.getMenuInput();
+        if (input == 0) break;
+        if (input == 1)      showOrderStatus();
+        else if (input == 2) showStockStatus();
+        else                 mainView_.showInvalidInput();
+    }
+}
+
+void ProductionController::showOrderStatus() {
+    monitorView_.showOrderStatus(orderRepo_.findAll());
+}
+
+void ProductionController::showStockStatus() {
+    monitorView_.showStockStatus(sampleRepo_.findAll(), orderRepo_.findAll());
 }

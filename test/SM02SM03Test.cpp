@@ -3,6 +3,7 @@
 #include "../view/SampleView.h"
 #include "../view/MainView.h"
 #include "../view/OrderView.h"
+#include "../view/MonitorView.h"
 #include "../model/IRepository.h"
 #include "../model/IOrderRepository.h"
 #include "../model/Sample.h"
@@ -36,6 +37,14 @@ public:
     MOCK_METHOD(bool,                update,       (const Order&),    (override));
     MOCK_METHOD(bool,                remove,       (int),             (override));
     MOCK_METHOD(bool,                updateStatus, (int, OrderStatus),(override));
+};
+
+class MockMonitorView : public MonitorView {
+public:
+    MOCK_METHOD(void, showMonitorMenu,  (), (override));
+    MOCK_METHOD(void, showOrderStatus,  (const std::vector<Order>&), (override));
+    MOCK_METHOD(void, showStockStatus,  (const std::vector<Sample>&,
+                                         const std::vector<Order>&), (override));
 };
 
 class MockMainView : public MainView {
@@ -100,8 +109,8 @@ TEST(SM02Test, ShowsAllSamples) {
     EXPECT_CALL(repo, findAll()).WillOnce(Return(samples));
     EXPECT_CALL(sv, showSampleList(samples)).Times(1);
 
-    MockOrderView ov2; MockOrderRepository or2_;
-    ProductionController ctrl(mv, sv, ov2, repo, or2_);
+    MockOrderView ov2; MockMonitorView mon2; MockOrderRepository or2_;
+    ProductionController ctrl(mv, sv, ov2, mon2, repo, or2_);
     ctrl.run();
 }
 
@@ -119,8 +128,8 @@ TEST(SM02Test, ShowsEmptyListWhenNoSamples) {
     EXPECT_CALL(repo, findAll()).WillOnce(Return(std::vector<Sample>{}));
     EXPECT_CALL(sv, showSampleList(std::vector<Sample>{})).Times(1);
 
-    MockOrderView ov2; MockOrderRepository or2_;
-    ProductionController ctrl(mv, sv, ov2, repo, or2_);
+    MockOrderView ov2; MockMonitorView mon2; MockOrderRepository or2_;
+    ProductionController ctrl(mv, sv, ov2, mon2, repo, or2_);
     ctrl.run();
 }
 
@@ -146,8 +155,8 @@ TEST(SM03Test, FindsByKeyword) {
         return v.size() == 1 && v[0].name == "Silicon-A";
     }))).Times(1);
 
-    MockOrderView ov2; MockOrderRepository or2_;
-    ProductionController ctrl(mv, sv, ov2, repo, or2_);
+    MockOrderView ov2; MockMonitorView mon2; MockOrderRepository or2_;
+    ProductionController ctrl(mv, sv, ov2, mon2, repo, or2_);
     ctrl.run();
 }
 
@@ -168,8 +177,8 @@ TEST(SM03Test, ShowsNoResultWhenNotFound) {
     EXPECT_CALL(sv, inputSearchKeyword()).WillOnce(Return("Gallium"));
     EXPECT_CALL(sv, showNoResult()).Times(1);
 
-    MockOrderView ov2; MockOrderRepository or2_;
-    ProductionController ctrl(mv, sv, ov2, repo, or2_);
+    MockOrderView ov2; MockMonitorView mon2; MockOrderRepository or2_;
+    ProductionController ctrl(mv, sv, ov2, mon2, repo, or2_);
     ctrl.run();
 }
 
@@ -192,8 +201,8 @@ TEST(SM03Test, EmptyKeywordMatchesAll) {
         return v.size() == 2;
     }))).Times(1);
 
-    MockOrderView ov2; MockOrderRepository or2_;
-    ProductionController ctrl(mv, sv, ov2, repo, or2_);
+    MockOrderView ov2; MockMonitorView mon2; MockOrderRepository or2_;
+    ProductionController ctrl(mv, sv, ov2, mon2, repo, or2_);
     ctrl.run();
 }
 
@@ -211,8 +220,8 @@ TEST(AppControllerSummaryTest, ShowsCountAndStockFromRepo) {
     EXPECT_CALL(mv, showRoleMenu(2, 15)).Times(1);
     EXPECT_CALL(mv, getMenuInput()).WillOnce(Return(0));
 
-    MockOrderView ov; MockOrderRepository or_;
-    AppController ctrl(mv, ov, sv, repo, or_);
+    MockOrderView ov; MockMonitorView mon; MockOrderRepository or_;
+    AppController ctrl(mv, ov, mon, sv, repo, or_);
     ctrl.run();
 }
 
@@ -223,7 +232,7 @@ TEST(AppControllerSummaryTest, ShowsZeroWhenRepoEmpty) {
     EXPECT_CALL(mv, showRoleMenu(0, 0)).Times(1);
     EXPECT_CALL(mv, getMenuInput()).WillOnce(Return(0));
 
-    MockOrderView ov; MockOrderRepository or_;
-    AppController ctrl(mv, ov, sv, repo, or_);
+    MockOrderView ov; MockMonitorView mon; MockOrderRepository or_;
+    AppController ctrl(mv, ov, mon, sv, repo, or_);
     ctrl.run();
 }

@@ -2,6 +2,7 @@
 #include <gmock/gmock.h>
 #include "../view/MainView.h"
 #include "../view/OrderView.h"
+#include "../view/MonitorView.h"
 #include "../model/IRepository.h"
 #include "../model/IOrderRepository.h"
 #include "../model/Sample.h"
@@ -54,6 +55,14 @@ public:
     MOCK_METHOD(bool,                 updateStatus, (int, OrderStatus), (override));
 };
 
+class MockMonitorView : public MonitorView {
+public:
+    MOCK_METHOD(void, showMonitorMenu,  (), (override));
+    MOCK_METHOD(void, showOrderStatus,  (const std::vector<Order>&), (override));
+    MOCK_METHOD(void, showStockStatus,  (const std::vector<Sample>&,
+                                         const std::vector<Order>&), (override));
+};
+
 // OR-01·02 흐름: run() → menu → 입력 → 처리 → menu → 0 종료
 // getMenuInput 호출 순서: showOrderManagerMenu → N선택 → ... → showOrderManagerMenu → 0
 
@@ -76,7 +85,8 @@ TEST(OR01Test, ReceiveOrderSuccess) {
     EXPECT_CALL(or_, create(_)).WillOnce(Return(created));
     EXPECT_CALL(ov, showOrderRegistered(_)).Times(1);
 
-    OrderController ctrl(mv, ov, sr, or_);
+    MockMonitorView mon;
+    OrderController ctrl(mv, ov, mon, sr, or_);
     ctrl.run();
 }
 
@@ -92,7 +102,8 @@ TEST(OR01Test, RejectsInvalidSampleId) {
     EXPECT_CALL(ov, showInvalidInput(_)).Times(1);
     EXPECT_CALL(or_, create(_)).Times(0);
 
-    OrderController ctrl(mv, ov, sr, or_);
+    MockMonitorView mon;
+    OrderController ctrl(mv, ov, mon, sr, or_);
     ctrl.run();
 }
 
@@ -110,7 +121,8 @@ TEST(OR01Test, RejectsEmptyCustomerName) {
     EXPECT_CALL(ov, showInvalidInput(_)).Times(1);
     EXPECT_CALL(or_, create(_)).Times(0);
 
-    OrderController ctrl(mv, ov, sr, or_);
+    MockMonitorView mon;
+    OrderController ctrl(mv, ov, mon, sr, or_);
     ctrl.run();
 }
 
@@ -129,7 +141,8 @@ TEST(OR01Test, RejectsZeroQuantity) {
     EXPECT_CALL(ov, showInvalidInput(_)).Times(1);
     EXPECT_CALL(or_, create(_)).Times(0);
 
-    OrderController ctrl(mv, ov, sr, or_);
+    MockMonitorView mon;
+    OrderController ctrl(mv, ov, mon, sr, or_);
     ctrl.run();
 }
 
@@ -148,7 +161,8 @@ TEST(OR02Test, ShowsReservedOrders) {
     EXPECT_CALL(sr, findAll()).WillOnce(Return(samples));
     EXPECT_CALL(ov, showOrderList(_, _)).Times(1);
 
-    OrderController ctrl(mv, ov, sr, or_);
+    MockMonitorView mon;
+    OrderController ctrl(mv, ov, mon, sr, or_);
     ctrl.run();
 }
 
@@ -162,7 +176,8 @@ TEST(OR02Test, ShowsEmptyWhenNoOrders) {
     EXPECT_CALL(or_, findAll()).WillOnce(Return(std::vector<Order>{}));
     EXPECT_CALL(ov, showNoOrders()).Times(1);
 
-    OrderController ctrl(mv, ov, sr, or_);
+    MockMonitorView mon;
+    OrderController ctrl(mv, ov, mon, sr, or_);
     ctrl.run();
 }
 

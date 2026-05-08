@@ -3,6 +3,7 @@
 #include "../view/SampleView.h"
 #include "../view/MainView.h"
 #include "../view/OrderView.h"
+#include "../view/MonitorView.h"
 #include "../model/IRepository.h"
 #include "../model/IOrderRepository.h"
 #include "../model/Sample.h"
@@ -72,6 +73,14 @@ public:
     MOCK_METHOD(bool,                updateStatus, (int, OrderStatus),(override));
 };
 
+class MockMonitorView : public MonitorView {
+public:
+    MOCK_METHOD(void, showMonitorMenu,  (), (override));
+    MOCK_METHOD(void, showOrderStatus,  (const std::vector<Order>&), (override));
+    MOCK_METHOD(void, showStockStatus,  (const std::vector<Sample>&,
+                                         const std::vector<Order>&), (override));
+};
+
 } // namespace
 
 // 실제 호출 순서 (RegisterSampleSuccess):
@@ -102,8 +111,8 @@ TEST(SM01Test, RegisterSampleSuccess) {
     EXPECT_CALL(repo, create(_)).WillOnce(Return(created));
     EXPECT_CALL(sampleView, showRegistered(_)).Times(1);
 
-    MockOrderView orderView; MockOrderRepository orderRepo;
-    ProductionController ctrl(mainView, sampleView, orderView, repo, orderRepo);
+    MockOrderView orderView; MockMonitorView monView; MockOrderRepository orderRepo;
+    ProductionController ctrl(mainView, sampleView, orderView, monView, repo, orderRepo);
     ctrl.run();
 }
 
@@ -124,8 +133,8 @@ TEST(SM01Test, RejectsEmptyName) {
     EXPECT_CALL(sampleView, showInvalidInput(_)).Times(1);
     EXPECT_CALL(repo, create(_)).Times(0);
 
-    MockOrderView orderView; MockOrderRepository orderRepo;
-    ProductionController ctrl(mainView, sampleView, orderView, repo, orderRepo);
+    MockOrderView orderView; MockMonitorView monView; MockOrderRepository orderRepo;
+    ProductionController ctrl(mainView, sampleView, orderView, monView, repo, orderRepo);
     ctrl.run();
 }
 
@@ -147,8 +156,8 @@ TEST(SM01Test, RejectsNonPositiveAvgTime) {
     EXPECT_CALL(sampleView, showInvalidInput(_)).Times(1);
     EXPECT_CALL(repo, create(_)).Times(0);
 
-    MockOrderView orderView; MockOrderRepository orderRepo;
-    ProductionController ctrl(mainView, sampleView, orderView, repo, orderRepo);
+    MockOrderView orderView; MockMonitorView monView; MockOrderRepository orderRepo;
+    ProductionController ctrl(mainView, sampleView, orderView, monView, repo, orderRepo);
     ctrl.run();
 }
 
@@ -171,8 +180,8 @@ TEST(SM01Test, RejectsYieldZero) {
     EXPECT_CALL(sampleView, showInvalidInput(_)).Times(1);
     EXPECT_CALL(repo, create(_)).Times(0);
 
-    MockOrderView orderView; MockOrderRepository orderRepo;
-    ProductionController ctrl(mainView, sampleView, orderView, repo, orderRepo);
+    MockOrderView orderView; MockMonitorView monView; MockOrderRepository orderRepo;
+    ProductionController ctrl(mainView, sampleView, orderView, monView, repo, orderRepo);
     ctrl.run();
 }
 
@@ -195,7 +204,7 @@ TEST(SM01Test, RejectsYieldAboveOne) {
     EXPECT_CALL(sampleView, showInvalidInput(_)).Times(1);
     EXPECT_CALL(repo, create(_)).Times(0);
 
-    MockOrderView orderView; MockOrderRepository orderRepo;
-    ProductionController ctrl(mainView, sampleView, orderView, repo, orderRepo);
+    MockOrderView orderView; MockMonitorView monView; MockOrderRepository orderRepo;
+    ProductionController ctrl(mainView, sampleView, orderView, monView, repo, orderRepo);
     ctrl.run();
 }

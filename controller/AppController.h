@@ -3,6 +3,7 @@
 #include "ProductionController.h"
 #include "../view/MainView.h"
 #include "../view/OrderView.h"
+#include "../view/MonitorView.h"
 #include "../view/SampleView.h"
 #include "../model/IRepository.h"
 #include "../model/IOrderRepository.h"
@@ -12,6 +13,7 @@ class AppController {
 public:
     AppController(MainView& mainView,
                   OrderView& orderView,
+                  MonitorView& monitorView,
                   SampleView& sampleView,
                   IRepository<Sample>& sampleRepo,
                   IOrderRepository& orderRepo);
