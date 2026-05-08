@@ -186,8 +186,35 @@ void ProductionController::runProductionMenu() {
         if (input == 0) break;
         if (input == 1)      showProductionStatus();
         else if (input == 2) showProductionQueue();
+        else if (input == 3) completeProduction();
         else                 mainView_.showInvalidInput();
     }
+}
+
+void ProductionController::completeProduction() {
+    int id = productionView_.inputOrderId();
+    auto found = orderRepo_.findById(id);
+    if (!found) {
+        productionView_.showInvalidInput("존재하지 않는 주문입니다.");
+        return;
+    }
+    if (found->status != OrderStatus::PRODUCING) {
+        productionView_.showInvalidInput("PRODUCING 상태의 주문만 완료 처리할 수 있습니다.");
+        return;
+    }
+    auto sample = sampleRepo_.findById(found->sampleId);
+    int actualQty = 0;
+    if (sample) {
+        int shortage = found->quantity - sample->stock;
+        if (shortage > 0)
+            actualQty = static_cast<int>(
+                std::ceil(static_cast<double>(shortage) / (sample->yield * 0.9)));
+        Sample updated = *sample;
+        updated.stock += actualQty;
+        sampleRepo_.update(updated);
+    }
+    orderRepo_.updateStatus(id, OrderStatus::CONFIRMED);
+    productionView_.showProductionCompleted(*found, actualQty);
 }
 
 std::vector<ProductionEntry> ProductionController::buildProductionEntries(bool sortByUpdatedAt) {

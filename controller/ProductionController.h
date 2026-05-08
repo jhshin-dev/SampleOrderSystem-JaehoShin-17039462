@@ -47,5 +47,6 @@ private:
     void runProductionMenu();
     void showProductionStatus();
     void showProductionQueue();
+    void completeProduction();
     std::vector<ProductionEntry> buildProductionEntries(bool sortByUpdatedAt);
 };

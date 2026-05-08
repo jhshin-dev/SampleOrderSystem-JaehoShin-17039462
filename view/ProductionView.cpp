@@ -1,6 +1,8 @@
 #include "ProductionView.h"
 #include <iostream>
 #include <iomanip>
+#include <limits>
+#include <string>
 
 void ProductionView::showProductionMenu() {
     std::cout << "\n========================================\n";
@@ -8,6 +10,7 @@ void ProductionView::showProductionMenu() {
     std::cout << "========================================\n";
     std::cout << " 1. 생산 현황\n";
     std::cout << " 2. 생산 대기 큐\n";
+    std::cout << " 3. 생산 완료 처리\n";
     std::cout << " 0. 돌아가기\n";
     std::cout << "========================================\n";
     std::cout << "선택: ";
@@ -52,4 +55,24 @@ void ProductionView::showProductionQueue(const std::vector<ProductionEntry>& ent
 
 void ProductionView::showNoProductionOrders() {
     std::cout << "\n  현재 생산 중인 주문이 없습니다.\n";
+}
+
+int ProductionView::inputOrderId() {
+    std::cout << "  주문 ID: ";
+    int v;
+    if (std::cin >> v) return v;
+    std::cin.clear();
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    return -1;
+}
+
+void ProductionView::showProductionCompleted(const Order& o, int actualQty) {
+    std::cout << "\n  [생산 완료] 주문 " << o.id
+              << "이(가) CONFIRMED 상태로 전환되었습니다.\n";
+    std::cout << "             실 생산량 " << actualQty
+              << "개가 재고에 반영되었습니다.\n";
+}
+
+void ProductionView::showInvalidInput(const std::string& msg) {
+    std::cout << "\n  [오류] " << msg << "\n";
 }
