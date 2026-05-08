@@ -3,10 +3,13 @@
 #include "../view/SampleView.h"
 #include "../view/OrderView.h"
 #include "../view/MonitorView.h"
+#include "../view/ProductionView.h"
 #include "../model/IRepository.h"
 #include "../model/IOrderRepository.h"
 #include "../model/Sample.h"
 #include "../model/Order.h"
+#include "../model/ProductionEntry.h"
+#include <vector>
 
 class ProductionController {
 public:
@@ -14,6 +17,7 @@ public:
                          SampleView& sampleView,
                          OrderView& orderView,
                          MonitorView& monitorView,
+                         ProductionView& productionView,
                          IRepository<Sample>& sampleRepo,
                          IOrderRepository& orderRepo);
     void run();
@@ -22,6 +26,7 @@ private:
     SampleView&          sampleView_;
     OrderView&           orderView_;
     MonitorView&         monitorView_;
+    ProductionView&      productionView_;
     IRepository<Sample>& sampleRepo_;
     IOrderRepository&    orderRepo_;
 
@@ -38,4 +43,9 @@ private:
     void runMonitor();
     void showOrderStatus();
     void showStockStatus();
+
+    void runProductionMenu();
+    void showProductionStatus();
+    void showProductionQueue();
+    std::vector<ProductionEntry> buildProductionEntries(bool sortByUpdatedAt);
 };

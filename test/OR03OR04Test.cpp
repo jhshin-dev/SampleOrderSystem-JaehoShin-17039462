@@ -3,6 +3,8 @@
 #include "../view/MainView.h"
 #include "../view/OrderView.h"
 #include "../view/MonitorView.h"
+#include "../view/ProductionView.h"
+#include "../model/ProductionEntry.h"
 #include "../view/SampleView.h"
 #include "../model/IRepository.h"
 #include "../model/IOrderRepository.h"
@@ -84,6 +86,14 @@ public:
                                          const std::vector<Order>&), (override));
 };
 
+class MockProductionView : public ProductionView {
+public:
+    MOCK_METHOD(void, showProductionMenu,     (), (override));
+    MOCK_METHOD(void, showProductionStatus,   (const std::vector<ProductionEntry>&), (override));
+    MOCK_METHOD(void, showProductionQueue,    (const std::vector<ProductionEntry>&), (override));
+    MOCK_METHOD(void, showNoProductionOrders, (), (override));
+};
+
 // 헬퍼: 주문 생성
 Order makeOrder(int id, int sampleId, int qty, OrderStatus status = OrderStatus::RESERVED) {
     Order o; o.id = id; o.sampleId = sampleId;
@@ -97,8 +107,8 @@ Sample makeSample(int id, int stock) {
     return s;
 }
 
-// 승인·거절 흐름: run()→2(주문승인거절) → runOrderApprovalMenu()
-// getMenuInput: run()→2, approvalMenu→선택, approvalMenu→0, run()→0
+// ?�인·거절 ?�름: run()??(주문?�인거절) ??runOrderApprovalMenu()
+// getMenuInput: run()??, approvalMenu?�선?? approvalMenu??, run()??
 
 TEST(OR03Test, ApprovesOrderConfirmedWhenStockSufficient) {
     MockMainView mv; MockOrderView ov; MockSampleView sv;
@@ -110,8 +120,8 @@ TEST(OR03Test, ApprovesOrderConfirmedWhenStockSufficient) {
     EXPECT_CALL(mv, showProductionManagerMenu(0, 0)).Times(2);
     EXPECT_CALL(ov, showApprovalMenu()).Times(2);
     EXPECT_CALL(mv, getMenuInput())
-        .WillOnce(Return(2))   // run: 주문 승인·거절
-        .WillOnce(Return(2))   // approvalMenu: 주문 승인
+        .WillOnce(Return(2))   // run: 주문 ?�인·거절
+        .WillOnce(Return(2))   // approvalMenu: 주문 ?�인
         .WillOnce(Return(0))   // approvalMenu: 종료
         .WillOnce(Return(0));  // run: 종료
 
@@ -121,8 +131,8 @@ TEST(OR03Test, ApprovesOrderConfirmedWhenStockSufficient) {
     EXPECT_CALL(or_, updateStatus(1, OrderStatus::CONFIRMED)).WillOnce(Return(true));
     EXPECT_CALL(ov, showConfirmed(_)).Times(1);
 
-    MockMonitorView mon;
-    ProductionController ctrl(mv, sv, ov, mon, sr, or_);
+    MockMonitorView mon; MockProductionView pv;
+    ProductionController ctrl(mv, sv, ov, mon, pv, sr, or_);
     ctrl.run();
 }
 
@@ -147,8 +157,8 @@ TEST(OR03Test, ApprovesOrderProducingWhenStockInsufficient) {
     EXPECT_CALL(or_, updateStatus(1, OrderStatus::PRODUCING)).WillOnce(Return(true));
     EXPECT_CALL(ov, showSentToProduction(_)).Times(1);
 
-    MockMonitorView mon;
-    ProductionController ctrl(mv, sv, ov, mon, sr, or_);
+    MockMonitorView mon; MockProductionView pv;
+    ProductionController ctrl(mv, sv, ov, mon, pv, sr, or_);
     ctrl.run();
 }
 
@@ -169,8 +179,8 @@ TEST(OR03Test, RejectsApprovalForNonExistentOrder) {
     EXPECT_CALL(ov, showInvalidInput(_)).Times(1);
     EXPECT_CALL(or_, updateStatus(_, _)).Times(0);
 
-    MockMonitorView mon;
-    ProductionController ctrl(mv, sv, ov, mon, sr, or_);
+    MockMonitorView mon; MockProductionView pv;
+    ProductionController ctrl(mv, sv, ov, mon, pv, sr, or_);
     ctrl.run();
 }
 
@@ -193,8 +203,8 @@ TEST(OR03Test, RejectsApprovalForNonReservedOrder) {
     EXPECT_CALL(ov, showInvalidInput(_)).Times(1);
     EXPECT_CALL(or_, updateStatus(_, _)).Times(0);
 
-    MockMonitorView mon;
-    ProductionController ctrl(mv, sv, ov, mon, sr, or_);
+    MockMonitorView mon; MockProductionView pv;
+    ProductionController ctrl(mv, sv, ov, mon, pv, sr, or_);
     ctrl.run();
 }
 
@@ -217,8 +227,8 @@ TEST(OR04Test, RejectsOrder) {
     EXPECT_CALL(or_, updateStatus(1, OrderStatus::REJECTED)).WillOnce(Return(true));
     EXPECT_CALL(ov, showRejected(_)).Times(1);
 
-    MockMonitorView mon;
-    ProductionController ctrl(mv, sv, ov, mon, sr, or_);
+    MockMonitorView mon; MockProductionView pv;
+    ProductionController ctrl(mv, sv, ov, mon, pv, sr, or_);
     ctrl.run();
 }
 
@@ -241,9 +251,11 @@ TEST(OR04Test, RejectsRejectionForNonReservedOrder) {
     EXPECT_CALL(ov, showInvalidInput(_)).Times(1);
     EXPECT_CALL(or_, updateStatus(_, _)).Times(0);
 
-    MockMonitorView mon;
-    ProductionController ctrl(mv, sv, ov, mon, sr, or_);
+    MockMonitorView mon; MockProductionView pv;
+    ProductionController ctrl(mv, sv, ov, mon, pv, sr, or_);
     ctrl.run();
 }
 
 } // namespace
+
+

@@ -1,14 +1,18 @@
 #include "ProductionController.h"
 #include <vector>
+#include <algorithm>
+#include <cmath>
 
 ProductionController::ProductionController(MainView& mainView,
                                            SampleView& sampleView,
                                            OrderView& orderView,
                                            MonitorView& monitorView,
+                                           ProductionView& productionView,
                                            IRepository<Sample>& sampleRepo,
                                            IOrderRepository& orderRepo)
     : mainView_(mainView), sampleView_(sampleView), orderView_(orderView),
-      monitorView_(monitorView), sampleRepo_(sampleRepo), orderRepo_(orderRepo) {}
+      monitorView_(monitorView), productionView_(productionView),
+      sampleRepo_(sampleRepo), orderRepo_(orderRepo) {}
 
 void ProductionController::run() {
     while (true) {
@@ -20,7 +24,7 @@ void ProductionController::run() {
         else if (input == 2)
             runOrderApprovalMenu();
         else if (input == 3)
-            mainView_.showComingSoon();
+            runProductionMenu();
         else if (input == 4)
             runMonitor();
         else
@@ -173,4 +177,52 @@ void ProductionController::showOrderStatus() {
 
 void ProductionController::showStockStatus() {
     monitorView_.showStockStatus(sampleRepo_.findAll(), orderRepo_.findAll());
+}
+
+void ProductionController::runProductionMenu() {
+    while (true) {
+        productionView_.showProductionMenu();
+        int input = mainView_.getMenuInput();
+        if (input == 0) break;
+        if (input == 1)      showProductionStatus();
+        else if (input == 2) showProductionQueue();
+        else                 mainView_.showInvalidInput();
+    }
+}
+
+std::vector<ProductionEntry> ProductionController::buildProductionEntries(bool sortByUpdatedAt) {
+    auto all = orderRepo_.findAll();
+    std::vector<Order> producing;
+    for (const auto& o : all)
+        if (o.status == OrderStatus::PRODUCING)
+            producing.push_back(o);
+
+    if (sortByUpdatedAt)
+        std::sort(producing.begin(), producing.end(),
+            [](const Order& a, const Order& b) { return a.updatedAt < b.updatedAt; });
+
+    std::vector<ProductionEntry> entries;
+    for (const auto& o : producing) {
+        auto s = sampleRepo_.findById(o.sampleId);
+        if (!s) continue;
+        int shortage  = o.quantity - s->stock;
+        int actualQty = static_cast<int>(
+            std::ceil(static_cast<double>(shortage) / (s->yield * 0.9)));
+        entries.push_back({o.id, s->name, o.customerName,
+                           o.quantity, shortage, actualQty,
+                           s->avgProductionTime * actualQty, o.updatedAt});
+    }
+    return entries;
+}
+
+void ProductionController::showProductionStatus() {
+    auto entries = buildProductionEntries(false);
+    if (entries.empty()) { productionView_.showNoProductionOrders(); return; }
+    productionView_.showProductionStatus(entries);
+}
+
+void ProductionController::showProductionQueue() {
+    auto entries = buildProductionEntries(true);
+    if (entries.empty()) { productionView_.showNoProductionOrders(); return; }
+    productionView_.showProductionQueue(entries);
 }

@@ -5,12 +5,13 @@ AppController::AppController(MainView& mainView,
                              OrderView& orderView,
                              MonitorView& monitorView,
                              SampleView& sampleView,
+                             ProductionView& productionView,
                              IRepository<Sample>& sampleRepo,
                              IOrderRepository& orderRepo)
     : mainView_(mainView),
       sampleRepo_(sampleRepo),
       orderCtrl_(mainView, orderView, monitorView, sampleRepo, orderRepo),
-      prodCtrl_(mainView, sampleView, orderView, monitorView, sampleRepo, orderRepo) {}
+      prodCtrl_(mainView, sampleView, orderView, monitorView, productionView, sampleRepo, orderRepo) {}
 
 void AppController::run() {
     SetConsoleOutputCP(CP_UTF8);

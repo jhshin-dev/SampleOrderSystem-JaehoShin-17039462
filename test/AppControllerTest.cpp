@@ -3,6 +3,7 @@
 #include "../view/MainView.h"
 #include "../view/OrderView.h"
 #include "../view/MonitorView.h"
+#include "../view/ProductionView.h"
 #include "../view/SampleView.h"
 #include "../model/IRepository.h"
 #include "../model/IOrderRepository.h"
@@ -79,6 +80,14 @@ public:
                                          const std::vector<Order>&), (override));
 };
 
+class MockProductionView : public ProductionView {
+public:
+    MOCK_METHOD(void, showProductionMenu,     (), (override));
+    MOCK_METHOD(void, showProductionStatus,   (const std::vector<ProductionEntry>&), (override));
+    MOCK_METHOD(void, showProductionQueue,    (const std::vector<ProductionEntry>&), (override));
+    MOCK_METHOD(void, showNoProductionOrders, (), (override));
+};
+
 // ── AppController ──────────────────────────────────────────
 
 TEST(AppControllerTest, ExitOnZero) {
@@ -87,9 +96,9 @@ TEST(AppControllerTest, ExitOnZero) {
     EXPECT_CALL(mock, getMenuInput()).WillOnce(Return(0));
 
     MockOrderView ov; MockMonitorView mon; MockSampleView sv;
-    MockSampleRepository sr; MockOrderRepository or_;
+    MockProductionView pv; MockSampleRepository sr; MockOrderRepository or_;
     EXPECT_CALL(sr, findAll()).WillRepeatedly(Return(std::vector<Sample>{}));
-    AppController ctrl(mock, ov, mon, sv, sr, or_);
+    AppController ctrl(mock, ov, mon, sv, pv, sr, or_);
     ctrl.run();
 }
 
@@ -102,9 +111,9 @@ TEST(AppControllerTest, InvalidInputShowsError) {
         .WillOnce(Return(0));
 
     MockOrderView ov; MockMonitorView mon; MockSampleView sv;
-    MockSampleRepository sr; MockOrderRepository or_;
+    MockProductionView pv; MockSampleRepository sr; MockOrderRepository or_;
     EXPECT_CALL(sr, findAll()).WillRepeatedly(Return(std::vector<Sample>{}));
-    AppController ctrl(mock, ov, mon, sv, sr, or_);
+    AppController ctrl(mock, ov, mon, sv, pv, sr, or_);
     ctrl.run();
 }
 
@@ -118,9 +127,9 @@ TEST(AppControllerTest, SelectOrderManager) {
         .WillOnce(Return(0));  // 역할 선택: 종료
 
     MockOrderView ov; MockMonitorView mon; MockSampleView sv;
-    MockSampleRepository sr; MockOrderRepository or_;
+    MockProductionView pv; MockSampleRepository sr; MockOrderRepository or_;
     EXPECT_CALL(sr, findAll()).WillRepeatedly(Return(std::vector<Sample>{}));
-    AppController ctrl(mock, ov, mon, sv, sr, or_);
+    AppController ctrl(mock, ov, mon, sv, pv, sr, or_);
     ctrl.run();
 }
 
@@ -134,9 +143,9 @@ TEST(AppControllerTest, SelectProductionManager) {
         .WillOnce(Return(0));  // 역할 선택: 종료
 
     MockOrderView ov; MockMonitorView mon; MockSampleView sv;
-    MockSampleRepository sr; MockOrderRepository or_;
+    MockProductionView pv; MockSampleRepository sr; MockOrderRepository or_;
     EXPECT_CALL(sr, findAll()).WillRepeatedly(Return(std::vector<Sample>{}));
-    AppController ctrl(mock, ov, mon, sv, sr, or_);
+    AppController ctrl(mock, ov, mon, sv, pv, sr, or_);
     ctrl.run();
 }
 
@@ -169,37 +178,23 @@ TEST(OrderControllerTest, InvalidInputShowsError) {
 
 TEST(ProductionControllerTest, ExitOnZero) {
     MockMainView mock; MockSampleView sv; MockOrderView ov;
-    MockMonitorView mon; MockSampleRepository sr; MockOrderRepository or_;
+    MockMonitorView mon; MockProductionView pv; MockSampleRepository sr; MockOrderRepository or_;
     EXPECT_CALL(mock, showProductionManagerMenu(0, 0)).Times(1);
     EXPECT_CALL(mock, getMenuInput()).WillOnce(Return(0));
 
-    ProductionController ctrl(mock, sv, ov, mon, sr, or_);
-    ctrl.run();
-}
-
-TEST(ProductionControllerTest, ComingSoonOnValidMenu) {
-    // Phase 5: 3~4번이 준비 중 (2번은 주문 승인·거절 메뉴로 진입)
-    MockMainView mock; MockSampleView sv; MockOrderView ov;
-    MockMonitorView mon; MockSampleRepository sr; MockOrderRepository or_;
-    EXPECT_CALL(mock, showProductionManagerMenu(0, 0)).Times(2);
-    EXPECT_CALL(mock, showComingSoon()).Times(1);
-    EXPECT_CALL(mock, getMenuInput())
-        .WillOnce(Return(3))
-        .WillOnce(Return(0));
-
-    ProductionController ctrl(mock, sv, ov, mon, sr, or_);
+    ProductionController ctrl(mock, sv, ov, mon, pv, sr, or_);
     ctrl.run();
 }
 
 TEST(ProductionControllerTest, InvalidInputShowsError) {
     MockMainView mock; MockSampleView sv; MockOrderView ov;
-    MockMonitorView mon; MockSampleRepository sr; MockOrderRepository or_;
+    MockMonitorView mon; MockProductionView pv; MockSampleRepository sr; MockOrderRepository or_;
     EXPECT_CALL(mock, showProductionManagerMenu(0, 0)).Times(2);
     EXPECT_CALL(mock, showInvalidInput()).Times(1);
     EXPECT_CALL(mock, getMenuInput())
         .WillOnce(Return(9))
         .WillOnce(Return(0));
 
-    ProductionController ctrl(mock, sv, ov, mon, sr, or_);
+    ProductionController ctrl(mock, sv, ov, mon, pv, sr, or_);
     ctrl.run();
 }

@@ -4,6 +4,8 @@
 #include "../view/MainView.h"
 #include "../view/OrderView.h"
 #include "../view/MonitorView.h"
+#include "../view/ProductionView.h"
+#include "../model/ProductionEntry.h"
 #include "../model/IRepository.h"
 #include "../model/IOrderRepository.h"
 #include "../model/Sample.h"
@@ -47,6 +49,14 @@ public:
                                          const std::vector<Order>&), (override));
 };
 
+class MockProductionView : public ProductionView {
+public:
+    MOCK_METHOD(void, showProductionMenu,     (), (override));
+    MOCK_METHOD(void, showProductionStatus,   (const std::vector<ProductionEntry>&), (override));
+    MOCK_METHOD(void, showProductionQueue,    (const std::vector<ProductionEntry>&), (override));
+    MOCK_METHOD(void, showNoProductionOrders, (), (override));
+};
+
 class MockMainView : public MainView {
 public:
     MOCK_METHOD(void, showRoleMenu,              (int, int), (override));
@@ -88,10 +98,10 @@ Sample makeSample(int id, const std::string& name) {
 
 } // namespace
 
-// ── SM-02 시료 조회 ────────────────────────────────────────
+// ?�?� SM-02 ?�료 조회 ?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�
 
-// 시료 조회 흐름: run()→1(시료관리) → runSampleMenu()→2(조회) → listSamples()
-//   → runSampleMenu()→0 → run()→0
+// ?�료 조회 ?�름: run()??(?�료관�? ??runSampleMenu()??(조회) ??listSamples()
+//   ??runSampleMenu()?? ??run()??
 
 TEST(SM02Test, ShowsAllSamples) {
     MockMainView mv; MockSampleView sv; MockSampleRepository repo;
@@ -101,7 +111,7 @@ TEST(SM02Test, ShowsAllSamples) {
     EXPECT_CALL(mv, showProductionManagerMenu(0, 0)).Times(2);
     EXPECT_CALL(sv, showSampleMenu()).Times(2);
     EXPECT_CALL(mv, getMenuInput())
-        .WillOnce(Return(1))   // run(): 시료 관리
+        .WillOnce(Return(1))   // run(): ?�료 관�?
         .WillOnce(Return(2))   // runSampleMenu(): 조회
         .WillOnce(Return(0))   // runSampleMenu(): 종료
         .WillOnce(Return(0));  // run(): 종료
@@ -109,8 +119,8 @@ TEST(SM02Test, ShowsAllSamples) {
     EXPECT_CALL(repo, findAll()).WillOnce(Return(samples));
     EXPECT_CALL(sv, showSampleList(samples)).Times(1);
 
-    MockOrderView ov2; MockMonitorView mon2; MockOrderRepository or2_;
-    ProductionController ctrl(mv, sv, ov2, mon2, repo, or2_);
+    MockOrderView ov2; MockMonitorView mon2; MockProductionView pv2; MockOrderRepository or2_;
+    ProductionController ctrl(mv, sv, ov2, mon2, pv2, repo, or2_);
     ctrl.run();
 }
 
@@ -128,12 +138,12 @@ TEST(SM02Test, ShowsEmptyListWhenNoSamples) {
     EXPECT_CALL(repo, findAll()).WillOnce(Return(std::vector<Sample>{}));
     EXPECT_CALL(sv, showSampleList(std::vector<Sample>{})).Times(1);
 
-    MockOrderView ov2; MockMonitorView mon2; MockOrderRepository or2_;
-    ProductionController ctrl(mv, sv, ov2, mon2, repo, or2_);
+    MockOrderView ov2; MockMonitorView mon2; MockProductionView pv2; MockOrderRepository or2_;
+    ProductionController ctrl(mv, sv, ov2, mon2, pv2, repo, or2_);
     ctrl.run();
 }
 
-// ── SM-03 시료 검색 ────────────────────────────────────────
+// ?�?� SM-03 ?�료 검???�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�
 
 TEST(SM03Test, FindsByKeyword) {
     MockMainView mv; MockSampleView sv; MockSampleRepository repo;
@@ -145,7 +155,7 @@ TEST(SM03Test, FindsByKeyword) {
     EXPECT_CALL(sv, showSampleMenu()).Times(2);
     EXPECT_CALL(mv, getMenuInput())
         .WillOnce(Return(1))
-        .WillOnce(Return(3))   // runSampleMenu(): 검색
+        .WillOnce(Return(3))   // runSampleMenu(): 검??
         .WillOnce(Return(0))
         .WillOnce(Return(0));
 
@@ -155,8 +165,8 @@ TEST(SM03Test, FindsByKeyword) {
         return v.size() == 1 && v[0].name == "Silicon-A";
     }))).Times(1);
 
-    MockOrderView ov2; MockMonitorView mon2; MockOrderRepository or2_;
-    ProductionController ctrl(mv, sv, ov2, mon2, repo, or2_);
+    MockOrderView ov2; MockMonitorView mon2; MockProductionView pv2; MockOrderRepository or2_;
+    ProductionController ctrl(mv, sv, ov2, mon2, pv2, repo, or2_);
     ctrl.run();
 }
 
@@ -177,8 +187,8 @@ TEST(SM03Test, ShowsNoResultWhenNotFound) {
     EXPECT_CALL(sv, inputSearchKeyword()).WillOnce(Return("Gallium"));
     EXPECT_CALL(sv, showNoResult()).Times(1);
 
-    MockOrderView ov2; MockMonitorView mon2; MockOrderRepository or2_;
-    ProductionController ctrl(mv, sv, ov2, mon2, repo, or2_);
+    MockOrderView ov2; MockMonitorView mon2; MockProductionView pv2; MockOrderRepository or2_;
+    ProductionController ctrl(mv, sv, ov2, mon2, pv2, repo, or2_);
     ctrl.run();
 }
 
@@ -201,12 +211,12 @@ TEST(SM03Test, EmptyKeywordMatchesAll) {
         return v.size() == 2;
     }))).Times(1);
 
-    MockOrderView ov2; MockMonitorView mon2; MockOrderRepository or2_;
-    ProductionController ctrl(mv, sv, ov2, mon2, repo, or2_);
+    MockOrderView ov2; MockMonitorView mon2; MockProductionView pv2; MockOrderRepository or2_;
+    ProductionController ctrl(mv, sv, ov2, mon2, pv2, repo, or2_);
     ctrl.run();
 }
 
-// ── 요약 정보 동적 계산 ────────────────────────────────────
+// ?�?� ?�약 ?�보 ?�적 계산 ?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�
 
 TEST(AppControllerSummaryTest, ShowsCountAndStockFromRepo) {
     MockMainView mv; MockSampleView sv; MockSampleRepository repo;
@@ -220,8 +230,8 @@ TEST(AppControllerSummaryTest, ShowsCountAndStockFromRepo) {
     EXPECT_CALL(mv, showRoleMenu(2, 15)).Times(1);
     EXPECT_CALL(mv, getMenuInput()).WillOnce(Return(0));
 
-    MockOrderView ov; MockMonitorView mon; MockOrderRepository or_;
-    AppController ctrl(mv, ov, mon, sv, repo, or_);
+    MockOrderView ov; MockMonitorView mon; MockProductionView pvApp; MockOrderRepository or_;
+    AppController ctrl(mv, ov, mon, sv, pvApp, repo, or_);
     ctrl.run();
 }
 
@@ -232,7 +242,10 @@ TEST(AppControllerSummaryTest, ShowsZeroWhenRepoEmpty) {
     EXPECT_CALL(mv, showRoleMenu(0, 0)).Times(1);
     EXPECT_CALL(mv, getMenuInput()).WillOnce(Return(0));
 
-    MockOrderView ov; MockMonitorView mon; MockOrderRepository or_;
-    AppController ctrl(mv, ov, mon, sv, repo, or_);
+    MockOrderView ov; MockMonitorView mon; MockProductionView pvApp; MockOrderRepository or_;
+    AppController ctrl(mv, ov, mon, sv, pvApp, repo, or_);
     ctrl.run();
 }
+
+
+

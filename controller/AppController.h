@@ -4,6 +4,7 @@
 #include "../view/MainView.h"
 #include "../view/OrderView.h"
 #include "../view/MonitorView.h"
+#include "../view/ProductionView.h"
 #include "../view/SampleView.h"
 #include "../model/IRepository.h"
 #include "../model/IOrderRepository.h"
@@ -15,6 +16,7 @@ public:
                   OrderView& orderView,
                   MonitorView& monitorView,
                   SampleView& sampleView,
+                  ProductionView& productionView,
                   IRepository<Sample>& sampleRepo,
                   IOrderRepository& orderRepo);
     void run();
