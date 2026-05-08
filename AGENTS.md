@@ -47,6 +47,17 @@ docs/
 4. `docs/design/phase-N.md` — 해당 Phase 설계 문서 (파일 구조·클래스·테스트 계획)
 5. 해당 기능의 `docs/features/<XX>-*.md` — 구현 전 입력·출력·흐름·제약 확인
 
+## Phase 개발 워크플로
+
+```
+설계 문서 작성 → [커밋] → /doc-verify → [변경 시 커밋] → 구현(TDD)
+→ /compliance-verify N → /test-verify N → [커밋] → 사람 리뷰
+```
+
+- 설계 문서 작성 직후 커밋
+- /doc-verify 후 변경사항이 있으면 커밋한 뒤 다음 단계 진행
+- 구현 코드 커밋은 `/compliance-verify`와 `/test-verify`가 모두 PASS된 후에 생성
+
 ---
 
 ## 핵심 비즈니스 규칙 (빠른 참조)

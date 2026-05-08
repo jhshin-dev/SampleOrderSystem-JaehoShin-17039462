@@ -114,6 +114,8 @@ MSBuild로 빌드하고 테스트를 실행한다.
 
 FAIL 항목이 있으면 **보고서 출력 후 코드 수정을 권고하고 중단**한다.
 FAIL이 없고 WARN만 있으면 보고서를 출력하고 사용자에게 확인을 요청한다.
-모든 항목이 PASS이면 "구현이 설계·계획과 일치합니다. 사람 리뷰를 진행하세요." 를 출력한다.
+모든 항목이 PASS이면 "/test-verify N 을 실행하세요." 를 출력한다.
+
+> 커밋은 /compliance-verify 와 /test-verify 가 모두 PASS된 후에 생성한다.
 
 $ARGUMENTS

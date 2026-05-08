@@ -185,7 +185,21 @@ int main(int argc, char** argv) {
 
 모든 테스트는 **Google Test (gtest)** 로 작성한다. `TEST()` / `TEST_F()` 매크로를 사용하고, mock이 필요한 경우 gmock(`MOCK_METHOD`)을 함께 활용한다.
 
-TDD 사이클로 개발: `/tdd` 스킬 참고.
+### Phase별 개발 순서
+
+```
+1. 설계 문서 작성       docs/design/phase-N.md 작성 및 검토 확정
+   └─ 커밋              설계 문서 커밋
+2. /doc-verify          문서 정합성 검증
+   └─ 커밋              변경사항 있으면 커밋 후 다음 단계 진행
+3. 구현 (TDD)           /tdd 스킬 참고, RED → GREEN → REFACTOR
+4. /compliance-verify N 구현이 설계·PLAN을 충족하는지 검사
+5. /test-verify N       빌드·단위·스모크 테스트 자동 수행
+6. 커밋                 4·5 모두 PASS 후에 구현 코드를 커밋
+7. 사람 직접 리뷰       고객 테스트 포인트 확인
+```
+
+> 구현 코드 커밋은 `/compliance-verify`와 `/test-verify` 가 모두 통과한 뒤에 생성한다.
 
 모든 변경사항은 커밋으로 정리하며 `git push origin master`로 원격 반영:
 - Remote: `https://github.com/jhshin-dev/SampleOrderSystem-JaehoShin-17039462.git`
