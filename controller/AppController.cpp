@@ -2,11 +2,13 @@
 #include <windows.h>
 
 AppController::AppController(MainView& mainView,
+                             OrderView& orderView,
                              SampleView& sampleView,
-                             IRepository<Sample>& sampleRepo)
+                             IRepository<Sample>& sampleRepo,
+                             IOrderRepository& orderRepo)
     : mainView_(mainView),
       sampleRepo_(sampleRepo),
-      orderCtrl_(mainView),
+      orderCtrl_(mainView, orderView, sampleRepo, orderRepo),
       prodCtrl_(mainView, sampleView, sampleRepo) {}
 
 void AppController::run() {

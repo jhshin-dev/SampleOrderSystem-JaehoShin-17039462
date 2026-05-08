@@ -1,8 +1,10 @@
 #include <gtest/gtest.h>
 #include "controller/AppController.h"
 #include "view/MainView.h"
+#include "view/OrderView.h"
 #include "view/SampleView.h"
 #include "model/SampleRepository.h"
+#include "model/OrderRepository.h"
 #include <string>
 
 int main(int argc, char** argv) {
@@ -13,9 +15,11 @@ int main(int argc, char** argv) {
         }
     }
     SampleRepository sampleRepo;
+    OrderRepository  orderRepo;
     MainView   mainView;
+    OrderView  orderView;
     SampleView sampleView;
-    AppController app(mainView, sampleView, sampleRepo);
+    AppController app(mainView, orderView, sampleView, sampleRepo, orderRepo);
     app.run();
     return 0;
 }

@@ -2,8 +2,11 @@
 #include <gmock/gmock.h>
 #include "../view/SampleView.h"
 #include "../view/MainView.h"
+#include "../view/OrderView.h"
 #include "../model/IRepository.h"
+#include "../model/IOrderRepository.h"
 #include "../model/Sample.h"
+#include "../model/Order.h"
 #include "../controller/ProductionController.h"
 #include "../controller/AppController.h"
 
@@ -11,6 +14,29 @@ using ::testing::Return;
 using ::testing::_;
 
 namespace {
+
+class MockOrderView : public OrderView {
+public:
+    MOCK_METHOD(int,         inputSampleId,      (), (override));
+    MOCK_METHOD(std::string, inputCustomerName,  (), (override));
+    MOCK_METHOD(int,         inputQuantity,      (), (override));
+    MOCK_METHOD(void, showOrderRegistered, (const Order&), (override));
+    MOCK_METHOD(void, showOrderList, (const std::vector<Order>&,
+                                     const std::vector<Sample>&), (override));
+    MOCK_METHOD(void, showNoOrders,     (), (override));
+    MOCK_METHOD(void, showInvalidInput, (const std::string&), (override));
+    MOCK_METHOD(void, showComingSoon,   (), (override));
+};
+
+class MockOrderRepository : public IOrderRepository {
+public:
+    MOCK_METHOD(Order,               create,       (Order),           (override));
+    MOCK_METHOD(std::vector<Order>,  findAll,      (),                (override));
+    MOCK_METHOD(std::optional<Order>,findById,     (int),             (override));
+    MOCK_METHOD(bool,                update,       (const Order&),    (override));
+    MOCK_METHOD(bool,                remove,       (int),             (override));
+    MOCK_METHOD(bool,                updateStatus, (int, OrderStatus),(override));
+};
 
 class MockMainView : public MainView {
 public:
@@ -180,7 +206,8 @@ TEST(AppControllerSummaryTest, ShowsCountAndStockFromRepo) {
     EXPECT_CALL(mv, showRoleMenu(2, 15)).Times(1);
     EXPECT_CALL(mv, getMenuInput()).WillOnce(Return(0));
 
-    AppController ctrl(mv, sv, repo);
+    MockOrderView ov; MockOrderRepository or_;
+    AppController ctrl(mv, ov, sv, repo, or_);
     ctrl.run();
 }
 
@@ -191,6 +218,7 @@ TEST(AppControllerSummaryTest, ShowsZeroWhenRepoEmpty) {
     EXPECT_CALL(mv, showRoleMenu(0, 0)).Times(1);
     EXPECT_CALL(mv, getMenuInput()).WillOnce(Return(0));
 
-    AppController ctrl(mv, sv, repo);
+    MockOrderView ov; MockOrderRepository or_;
+    AppController ctrl(mv, ov, sv, repo, or_);
     ctrl.run();
 }

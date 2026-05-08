@@ -139,6 +139,10 @@
     <ClCompile Include="test\SampleRepositoryTest.cpp" />
     <ClCompile Include="test\SM01Test.cpp" />
     <ClCompile Include="test\SM02SM03Test.cpp" />
+    <ClCompile Include="model\OrderRepository.cpp" />
+    <ClCompile Include="view\OrderView.cpp" />
+    <ClCompile Include="test\OrderRepositoryTest.cpp" />
+    <ClCompile Include="test\OR01OR02Test.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
