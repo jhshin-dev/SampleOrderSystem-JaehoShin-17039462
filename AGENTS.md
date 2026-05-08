@@ -53,8 +53,8 @@ docs/
 설계 문서 작성 → [커밋]
 → /doc-verify → [변경 시 커밋]
 → 구현(TDD)
-→ /compliance-verify N → [설계 문서 변경 시 커밋]
-→ /test-verify N → [설계 문서 변경 시 커밋]
+→ /compliance-verify N ┐ 병렬 실행 → [각각 설계 문서 변경 시 커밋]
+   /test-verify N      ┘
 → [구현 코드 커밋]  ← 아래 3가지 조건 모두 충족 후
 → 사람 리뷰
 ```

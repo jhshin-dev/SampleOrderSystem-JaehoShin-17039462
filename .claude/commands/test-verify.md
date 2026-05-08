@@ -153,9 +153,13 @@ PLAN.md Phase <N> 고객 테스트 포인트 기준:
 ```
 
 FAIL이 있으면 수정을 권고하고 중단한다.
-모든 자동 검증이 PASS이면 사람 확인 항목 체크리스트를 전달하고,
-"구현 코드를 커밋하고 사람 리뷰를 진행하세요." 를 출력한다.
+모든 자동 검증이 PASS이면 사람 확인 항목 체크리스트를 전달하고 아래를 출력한다:
+- 설계 문서 수정사항이 있으면 → "설계 문서를 커밋하세요. (/compliance-verify N 과 병렬 실행 중이면 양쪽 완료 후 커밋)"
+- 설계 문서 수정사항이 없으면 → "test-verify PASS. /compliance-verify N 결과를 확인하세요."
 
-> 커밋은 /compliance-verify 와 /test-verify 가 모두 PASS된 후에 생성한다.
+> **구현 코드 커밋 조건 (모두 충족 필요):**
+> 1. 설계 문서 변경사항 커밋 완료
+> 2. /compliance-verify PASS
+> 3. /test-verify PASS
 
 $ARGUMENTS

@@ -114,8 +114,13 @@ MSBuild로 빌드하고 테스트를 실행한다.
 
 FAIL 항목이 있으면 **보고서 출력 후 코드 수정을 권고하고 중단**한다.
 FAIL이 없고 WARN만 있으면 보고서를 출력하고 사용자에게 확인을 요청한다.
-모든 항목이 PASS이면 "/test-verify N 을 실행하세요." 를 출력한다.
+모든 항목이 PASS이면 아래를 출력한다:
+- 설계 문서 수정사항이 있으면 → "설계 문서를 커밋하세요. (/test-verify N 과 병렬 실행 중이면 양쪽 완료 후 커밋)"
+- 설계 문서 수정사항이 없으면 → "compliance-verify PASS. /test-verify N 결과를 확인하세요."
 
-> 커밋은 /compliance-verify 와 /test-verify 가 모두 PASS된 후에 생성한다.
+> **구현 코드 커밋 조건 (모두 충족 필요):**
+> 1. 설계 문서 변경사항 커밋 완료
+> 2. /compliance-verify PASS
+> 3. /test-verify PASS
 
 $ARGUMENTS
