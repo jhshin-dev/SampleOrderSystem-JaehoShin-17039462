@@ -36,20 +36,24 @@ MSBuild 경로: `C:\Program Files\Microsoft Visual Studio\18\Community\MSBuild\C
 **Sample** — 반도체 시료
 ```cpp
 struct Sample {
-    int         id    = 0;
+    int         id                = 0;
     std::string name;
-    std::string spec;   // 규격
-    int         stock = 0;
+    int         avgProductionTime = 0;   // 평균 생산시간 (분)
+    double      yield             = 0.0; // 수율 (0.0 ~ 1.0)
+    int         stock             = 0;
 };
 ```
+
+> 수율(yield): 정상 시료 수 / 총 생산 시료 수. 예) 100개 중 90개 정상 → 0.9
 
 **Order** — 생산 주문
 ```cpp
 struct Order {
-    int         id        = 0;
-    int         sampleId  = 0;
-    int         quantity  = 0;
-    OrderStatus status    = OrderStatus::RESERVED;
+    int         id           = 0;
+    int         sampleId     = 0;
+    std::string customerName;
+    int         quantity     = 0;
+    OrderStatus status       = OrderStatus::RESERVED;
     std::string createdAt;
     std::string updatedAt;
 };
@@ -57,13 +61,19 @@ struct Order {
 
 **OrderStatus** — 상태 전이 규칙 (state machine)
 ```
-RESERVED ──→ CONFIRMED
-         ──→ PRODUCING
-         ──→ REJECTED
-PRODUCING ──→ CONFIRMED
-CONFIRMED ──→ RELEASED
+RESERVED ──→ CONFIRMED   (승인 + 재고 충분: stock >= quantity)
+         ──→ PRODUCING   (승인 + 재고 부족: stock < quantity → 생산 라인 자동 등록)
+         ──→ REJECTED    (거절)
+PRODUCING ──→ CONFIRMED  (생산 완료)
+CONFIRMED ──→ RELEASED   (출고 처리)
 ```
 `isValidTransition(from, to)` 으로 전이 유효성 검증. RELEASED 상태의 주문은 삭제 불가.
+
+**생산량 계산** (재고 부족 시 생산 라인 등록 시점)
+```
+실 생산량  = ⌈부족분 / (수율 × 0.9)⌉
+총 생산시간 = avgProductionTime × 실 생산량
+```
 
 ## Architecture
 
