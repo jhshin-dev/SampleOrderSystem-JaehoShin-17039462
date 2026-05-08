@@ -35,7 +35,7 @@ SampleOrderSystem.vcxproj            새 .cpp 파일 등록
 
 ---
 
-## 3. 생산량 계산 공식
+## 3. 생산량 계산 공식 및 데이터 구조
 
 ```
 부족분       = quantity - stock
@@ -43,10 +43,26 @@ SampleOrderSystem.vcxproj            새 .cpp 파일 등록
 총 생산시간  = avgProductionTime × 실 생산량  (분)
 ```
 
-> 계산은 **ProductionView** 내부에서 처리한다.
-> Controller는 PRODUCING 주문 목록과 시료 정보를 전달하고,
-> View가 각 주문별 계산 및 표시를 담당한다.
-> (MonitorView의 재고 상태 판정과 동일한 패턴)
+**계산은 Controller에서 수행한다.** View는 전달받은 데이터를 출력만 담당한다.
+
+```cpp
+// model/ProductionEntry.h  (헤더 온리, .cpp 불필요)
+#pragma once
+#include <string>
+
+struct ProductionEntry {
+    int         orderId;
+    std::string sampleName;
+    std::string customerName;
+    int         quantity;
+    int         shortage;
+    int         actualQty;
+    int         totalTime;
+    std::string updatedAt;   // FIFO 정렬 기준
+};
+```
+
+Controller가 PRODUCING 주문마다 `ProductionEntry`를 계산하여 vector로 전달한다.
 
 ---
 
@@ -56,17 +72,14 @@ SampleOrderSystem.vcxproj            새 .cpp 파일 등록
 // view/ProductionView.h
 #pragma once
 #include <vector>
-#include "../model/Order.h"
-#include "../model/Sample.h"
+#include "../model/ProductionEntry.h"
 
 class ProductionView {
 public:
     virtual ~ProductionView() = default;
     virtual void showProductionMenu();
-    virtual void showProductionStatus(const std::vector<Order>& producingOrders,
-                                      const std::vector<Sample>& samples);
-    virtual void showProductionQueue(const std::vector<Order>& producingOrders,
-                                     const std::vector<Sample>& samples);
+    virtual void showProductionStatus(const std::vector<ProductionEntry>& entries);
+    virtual void showProductionQueue(const std::vector<ProductionEntry>& entries);
     virtual void showNoProductionOrders();
 };
 ```
@@ -81,8 +94,7 @@ public:
   └──────┴──────────────┴──────────┴──────┴──────┴──────────┴──────────┘
 ```
 
-**showProductionQueue():** updatedAt 오름차순 정렬 후 순번과 함께 출력.
-(정렬은 Controller에서 전달 전에 수행, View는 받은 순서대로 출력)
+**showProductionQueue():** Controller가 updatedAt 오름차순 정렬 후 전달. View는 순번과 함께 출력.
 
 ---
 
@@ -120,34 +132,49 @@ run() 메뉴 3번:
 └─ else → mainView_.showInvalidInput()
 ```
 
+### buildEntries() — 공통 헬퍼
+
+```cpp
+std::vector<ProductionEntry> buildProductionEntries(bool sortByUpdatedAt) {
+    auto all = orderRepo_.findAll();
+    std::vector<Order> producing;
+    for (const auto& o : all)
+        if (o.status == OrderStatus::PRODUCING)
+            producing.push_back(o);
+
+    if (sortByUpdatedAt)
+        std::sort(producing.begin(), producing.end(),
+            [](const Order& a, const Order& b) { return a.updatedAt < b.updatedAt; });
+
+    std::vector<ProductionEntry> entries;
+    for (const auto& o : producing) {
+        auto s = sampleRepo_.findById(o.sampleId);
+        if (!s) continue;
+        int shortage  = o.quantity - s->stock;
+        int actualQty = static_cast<int>(
+            std::ceil(shortage / (s->yield * 0.9)));
+        entries.push_back({o.id, s->name, o.customerName,
+                           o.quantity, shortage, actualQty,
+                           s->avgProductionTime * actualQty, o.updatedAt});
+    }
+    return entries;
+}
+```
+
 ### showProductionStatus()
 
 ```cpp
-auto all = orderRepo_.findAll();
-std::vector<Order> producing;
-for (const auto& o : all)
-    if (o.status == OrderStatus::PRODUCING)
-        producing.push_back(o);
-
-if (producing.empty()) { productionView_.showNoProductionOrders(); return; }
-productionView_.showProductionStatus(producing, sampleRepo_.findAll());
+auto entries = buildProductionEntries(false);
+if (entries.empty()) { productionView_.showNoProductionOrders(); return; }
+productionView_.showProductionStatus(entries);
 ```
 
 ### showProductionQueue()
 
 ```cpp
-auto all = orderRepo_.findAll();
-std::vector<Order> producing;
-for (const auto& o : all)
-    if (o.status == OrderStatus::PRODUCING)
-        producing.push_back(o);
-
-// FIFO: updatedAt 오름차순 정렬
-std::sort(producing.begin(), producing.end(),
-    [](const Order& a, const Order& b) { return a.updatedAt < b.updatedAt; });
-
-if (producing.empty()) { productionView_.showNoProductionOrders(); return; }
-productionView_.showProductionQueue(producing, sampleRepo_.findAll());
+auto entries = buildProductionEntries(true);  // updatedAt 오름차순
+if (entries.empty()) { productionView_.showNoProductionOrders(); return; }
+productionView_.showProductionQueue(entries);
 ```
 
 ---
@@ -173,6 +200,8 @@ AppController(MainView& mainView,
 <ClCompile Include="test\PL01PL02Test.cpp" />
 ```
 
+> `model/ProductionEntry.h`는 헤더 온리 — `<ClCompile>` 등록 불필요.
+
 ---
 
 ## 8. 테스트 계획 (gtest)
@@ -181,11 +210,9 @@ AppController(MainView& mainView,
 
 ```cpp
 class MockProductionView : public ProductionView {
-    MOCK_METHOD(void, showProductionMenu,   (), (override));
-    MOCK_METHOD(void, showProductionStatus, (const std::vector<Order>&,
-                                             const std::vector<Sample>&), (override));
-    MOCK_METHOD(void, showProductionQueue,  (const std::vector<Order>&,
-                                             const std::vector<Sample>&), (override));
+    MOCK_METHOD(void, showProductionMenu,     (), (override));
+    MOCK_METHOD(void, showProductionStatus,   (const std::vector<ProductionEntry>&), (override));
+    MOCK_METHOD(void, showProductionQueue,    (const std::vector<ProductionEntry>&), (override));
     MOCK_METHOD(void, showNoProductionOrders, (), (override));
 };
 ```
@@ -219,8 +246,7 @@ class MockProductionView : public ProductionView {
 
 ---
 
-## 10. 검토 포인트
+## 10. 확정 사항
 
-- 생산량 계산을 View에서 처리하는 방식에 동의하는가?
-  (Controller는 PRODUCING 주문 + samples 전달, View가 계산·출력)
-- PL-02 FIFO 정렬을 Controller에서 수행 후 View에 전달하는 방식에 동의하는가?
+- [확정] **Controller 계산, View 출력**: Controller가 `ProductionEntry` 계산·정렬, View는 순수 출력만 담당
+- [확정] **FIFO 정렬 기준**: `updatedAt` (생산 라인 등록 시각) 오름차순
